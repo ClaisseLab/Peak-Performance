@@ -1,0 +1,25 @@
+cluster,Orientation,current,Habitat_Type,mean_sr_focal,sd_sr_focal,max_sr_focal,min_sr_focal,median_sr_focal
+Group 1,Perpendicular,Up-current,High Relief,4.166666666666667,1.1690451944500122,6,3,4
+Group 2,Perpendicular,Down-current,High Ecotone,4.666666666666667,1.3662601021279464,6,3,5
+Group 3,Parallel,Down-current,High Ecotone,3.25,2.0056737702645644,7,0,3
+Group 3,Parallel,Down-current,Low Ecotone,3.5,1.5666989036012806,6,2,3
+Group 3,Parallel,Down-current,Medium Ecotone,3.75,1.864744681524183,7,1,3
+Group 3,Parallel,Down-current,Medium Relief,3.9166666666666665,1.378954368902449,6,2,4
+Group 4,Parallel,Down-current,Low Relief,2.75,1.6583123951777,6,1,3
+Group 4,Parallel,Up-current,Low Ecotone,4.083333333333333,1.6764862244009227,6,2,4
+Group 4,Parallel,Up-current,Medium Ecotone,3.5,1.6787441193290353,7,1,3.5
+Group 4,Perpendicular,Down-current,Low Relief,4,1.0954451150103321,6,3,4
+Group 4,Perpendicular,Up-current,High Ecotone,4.5,2.073644135332772,8,2,4.5
+Group 5,Parallel,Down-current,High Relief,5.166666666666667,1.1934162828797101,7,3,5.5
+Group 5,Parallel,Up-current,Low Relief,4.166666666666667,1.403458930534474,6,2,4.5
+Group 5,Perpendicular,Down-current,Low Ecotone,4.833333333333333,1.9407902170679516,7,2,5.5
+Group 5,Perpendicular,Down-current,Medium Ecotone,4,1.7888543819998317,7,2,3.5
+Group 5,Perpendicular,Down-current,Medium Relief,4.666666666666667,1.0327955589886444,6,3,5
+Group 5,Perpendicular,Up-current,Low Ecotone,3.8333333333333335,1.7224014243685084,7,2,3.5
+Group 5,Perpendicular,Up-current,Low Relief,5.166666666666667,1.9407902170679516,8,3,4.5
+Group 6,Parallel,Up-current,High Ecotone,4.75,1.2154310870109943,6,2,5
+Group 6,Parallel,Up-current,High Relief,4,1.7580981459830651,7,2,4
+Group 6,Parallel,Up-current,Medium Relief,4.833333333333333,1.4668044012461754,7,3,5
+Group 6,Perpendicular,Down-current,High Relief,6.166666666666667,1.6020819787597222,7,3,7
+Group 6,Perpendicular,Up-current,Medium Ecotone,4.666666666666667,0.816496580927726,6,4,4.5
+Group 6,Perpendicular,Up-current,Medium Relief,6.166666666666667,0.752772652709081,7,5,6
