@@ -241,6 +241,17 @@ spp_ID <- spp_ID %>%
   left_join(all_spp_mods_obs)
 
 
+# Focal species as proportion of total abundance observed
+spp_ID <- spp_ID |> 
+  ungroup() |> 
+  mutate(prop_abund = n/sum(n))
+
+# for result paragraph
+spp_ID |> 
+  filter(Genus_spp %in% focal_spp) |> 
+  summarise(sum(n), sum(prop_abund))
+
+
 #create a table of module characteristics 
 
 mod_ft <- flextable(module_var, 
