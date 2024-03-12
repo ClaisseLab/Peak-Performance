@@ -17,7 +17,7 @@ library(hms)
 
 
 #Read in the EMObs text file using read_delim (in tidyr use _ not .)
-dat_EMObs <- read_tsv("data/dat_EMObs.txt")
+dat_EMObs <- read_tsv("data/data/dat_EMObs.txt")
 
 #take a quick look at these data in case you need to alter column types
 glimpse(dat_EMObs)
@@ -499,7 +499,7 @@ dat_fish_2m_wide <- dat_fish %>%
 #Edit this as needed with additional variables
 
 #here we import our field notes
-dive_dat <- read.csv("data/DiveEvent.csv", fileEncoding = 'UTF-8-BOM')
+dive_dat <- read.csv("data/data/DiveEvent.csv", fileEncoding = 'UTF-8-BOM')
 
 #No idea why the imported name was like that for Module?
 #So I renamed it
