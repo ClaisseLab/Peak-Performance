@@ -1076,17 +1076,20 @@ heatmap_sp_clust<-dens_sp_clust_heatmap %>%
                        name= expression(paste("Density\n(No./100",m^{2},")"))) + #name= expression(density~(No.~100m,^{-2}))) +
   theme_bw() +
   guides(fill = guide_colorbar(barwidth = 1, barheight = 18)) + 
-  theme(axis.text.y = element_text(face = "bold"), axis.text.x = element_text(color = group_color_lab)) +
+  theme(axis.text.y = element_text(face = "bold", color = "black"), axis.text.x = element_text(face = "bold", color = group_color_lab)) +
   #xlab('Depth group (m)') +
   #scale_x_discrete(limits = rev(levels(dens_sp_clust_heatmap$cluster))) +
   ylab(NULL) +
   xlab(NULL) +
-  #theme(axis.text.x = element_text(angle = 90, hjust = 0, vjust = 0.5)) +
-  #scale_x_discrete(labels=c("rig midwater"="Mid", "rig base"="Base", "rig shellmound"="Shell", "natural reef"="Nat")) +
-  geom_text(aes(label = paste0("<b>", round(mean_clust_dens, 1), "</b>\n",
-                               paste("(", round(min_clust_dens, 1), ", ", round(max_clust_dens, 1), ")", sep = ""))),
-            size = 2.2,
-            parse = TRUE)
+
+  geom_text(aes(label = paste(round(mean_clust_dens, 1), "\n", 
+                              paste("(", 
+                                    round(min_clust_dens, 1), 
+                                    ", ", 
+                                    round(max_clust_dens, 1), 
+                                    ")", sep = ""))), 
+            size = 2.2, 
+            fontface = "bold") +
   scale_y_discrete(labels = c("Rock Wrasse","Olive Rockfish","Pile Perch","Opaleye","Barred Sand Bass","Rainbow Seaperch", "Black Perch","California Sheephead","Kelp Bass","Señorita","Blacksmith"))
 
 
