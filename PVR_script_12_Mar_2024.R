@@ -1387,32 +1387,41 @@ wide_fish_os_ht <- wide_fish_os_ht %>%
 
 
 ### ADD CLUSTER ANALYSIS - WHICH DEFINES THESE GROUPS
+#### Key Edits ----
+
+
+
+
+
+
+
+
 
 wide_fish_os_ht <- wide_fish_os_ht %>% 
-  mutate(cluster = (case_when(startsWith(os_ht, "West Perpendicular High Relief") ~ "Group 6",
-                              startsWith(os_ht, "West Perpendicular High Ecotone") ~ "Group 2",
-                              startsWith(os_ht, "West Perpendicular Low Relief") ~ "Group 3",
-                              startsWith(os_ht, "West Perpendicular Low Ecotone") ~ "Group 3",
-                              startsWith(os_ht, "West Perpendicular Medium Relief") ~ "Group 4",
-                              startsWith(os_ht, "West Perpendicular Medium Ecotone") ~ "Group 4",
-                              startsWith(os_ht, "East Perpendicular High Relief") ~ "Group 4",
-                              startsWith(os_ht, "East Perpendicular High Ecotone") ~ "Group 5",
-                              startsWith(os_ht, "East Perpendicular Low Relief") ~ "Group 2",
-                              startsWith(os_ht, "East Perpendicular Low Ecotone") ~ "Group 3",
-                              startsWith(os_ht, "East Perpendicular Medium Relief") ~ "Group 3",
-                              startsWith(os_ht, "East Perpendicular Medium Ecotone") ~ "Group 3",
-                              startsWith(os_ht, "West Parallel High Relief") ~ "Group 4",
-                              startsWith(os_ht, "West Parallel High Ecotone") ~ "Group 4",
-                              startsWith(os_ht, "West Parallel Low Relief") ~ "Group 3",
-                              startsWith(os_ht, "West Parallel Low Ecotone") ~ "Group 2",
-                              startsWith(os_ht, "West Parallel Medium Relief") ~ "Group 4",
-                              startsWith(os_ht, "West Parallel Medium Ecotone") ~ "Group 2",
-                              startsWith(os_ht, "East Parallel High Relief") ~ "Group 3",
-                              startsWith(os_ht, "East Parallel High Ecotone") ~ "Group 1",
-                              startsWith(os_ht, "East Parallel Low Relief") ~ "Group 2",
-                              startsWith(os_ht, "East Parallel Low Ecotone") ~ "Group 1",
-                              startsWith(os_ht, "East Parallel Medium Relief") ~ "Group 1",
-                              startsWith(os_ht, "East Parallel Medium Ecotone") ~ "Group 1")))
+  mutate(cluster = (case_when(startsWith(os_ht, "West Perpendicular High Relief") ~ "Group 5",
+                              startsWith(os_ht, "West Perpendicular High Ecotone") ~ "Group 3",
+                              startsWith(os_ht, "West Perpendicular Low Relief") ~ "Group 2",
+                              startsWith(os_ht, "West Perpendicular Low Ecotone") ~ "Group 2",
+                              startsWith(os_ht, "West Perpendicular Medium Relief") ~ "Group 1",
+                              startsWith(os_ht, "West Perpendicular Medium Ecotone") ~ "Group 1",
+                              startsWith(os_ht, "East Perpendicular High Relief") ~ "Group 1",
+                              startsWith(os_ht, "East Perpendicular High Ecotone") ~ "Group 6",
+                              startsWith(os_ht, "East Perpendicular Low Relief") ~ "Group 3",
+                              startsWith(os_ht, "East Perpendicular Low Ecotone") ~ "Group 2",
+                              startsWith(os_ht, "East Perpendicular Medium Relief") ~ "Group 2",
+                              startsWith(os_ht, "East Perpendicular Medium Ecotone") ~ "Group 2",
+                              startsWith(os_ht, "West Parallel High Relief") ~ "Group 1",
+                              startsWith(os_ht, "West Parallel High Ecotone") ~ "Group 1",
+                              startsWith(os_ht, "West Parallel Low Relief") ~ "Group 2",
+                              startsWith(os_ht, "West Parallel Low Ecotone") ~ "Group 3",
+                              startsWith(os_ht, "West Parallel Medium Relief") ~ "Group 1",
+                              startsWith(os_ht, "West Parallel Medium Ecotone") ~ "Group 3",
+                              startsWith(os_ht, "East Parallel High Relief") ~ "Group 2",
+                              startsWith(os_ht, "East Parallel High Ecotone") ~ "Group 4",
+                              startsWith(os_ht, "East Parallel Low Relief") ~ "Group 3",
+                              startsWith(os_ht, "East Parallel Low Ecotone") ~ "Group 4",
+                              startsWith(os_ht, "East Parallel Medium Relief") ~ "Group 4",
+                              startsWith(os_ht, "East Parallel Medium Ecotone") ~ "Group 4")))
 
 
 
@@ -1423,13 +1432,13 @@ wide_fish_os_ht <- wide_fish_os_ht %>%
 wide_fish_os_ht <- wide_fish_os_ht %>%
   mutate(cluster_2 = cluster)
 
-wide_fish_os_ht <- wide_fish_os_ht %>%
-  mutate(cluster_2 = str_replace_all(cluster_2, "Group 6", "Group 6: Perpendicular Inshore High Relief"),
-         cluster_2 = str_replace_all(cluster_2, "Group 5", "Group 5: Perpendicular Offshore High Ecotone"),
-         cluster_2 = str_replace_all(cluster_2, "Group 1", "Group 1: Sheltered Inshore Parallels"),
-         cluster_2 = str_replace_all(cluster_2, "Group 2", "Group 2: Low Relief & Ecotones"),
-         cluster_2 = str_replace_all(cluster_2, "Group 3", "Group 3: Intermediate"),
-         cluster_2 = str_replace_all(cluster_2, "Group 4", "Group 4: Offshore High & Medium Relief"))
+# wide_fish_os_ht <- wide_fish_os_ht %>%
+#   mutate(cluster_2 = str_replace_all(cluster_2, "Group 6", "Group 6: Perpendicular Inshore High Relief"),
+#          cluster_2 = str_replace_all(cluster_2, "Group 5", "Group 5: Perpendicular Offshore High Ecotone"),
+#          cluster_2 = str_replace_all(cluster_2, "Group 1", "Group 1: Sheltered Inshore Parallels"),
+#          cluster_2 = str_replace_all(cluster_2, "Group 2", "Group 2: Low Relief & Ecotones"),
+#          cluster_2 = str_replace_all(cluster_2, "Group 3", "Group 3: Intermediate"),
+#          cluster_2 = str_replace_all(cluster_2, "Group 4", "Group 4: Offshore High & Medium Relief"))
 
 
 wide_fish_os_ht <- wide_fish_os_ht %>% 
@@ -1467,7 +1476,7 @@ plot_wide_fish_os_ht <- ggplot(wide_fish_os_ht,
   geom_text(aes(label = os_lab), vjust = 2, hjust = .55, size = 4) +
   geom_point(aes(color = cluster_2, shape = Module),size = 6) +
   scale_shape_manual(values = c(15, 16, 17, 0, 1, 2)) +
-  scale_color_manual(values = c("purple4", "steelblue3", "springgreen4", "coral2","khaki4","black")) +
+  scale_color_manual(values = c("coral2","springgreen4", "steelblue3","purple4" ,"black","khaki4")) +
   theme_classic() +
   theme(axis.title.x = element_blank(), axis.title.y = element_blank(), axis.text = element_blank(), axis.ticks = element_blank(), panel.background = element_rect(fill = NA, color = "black", size = 1, linetype = "solid")) +
   theme(plot.margin = margin(1,2,1,1, "cm")) +
@@ -1479,7 +1488,6 @@ plot_wide_fish_os_ht <- ggplot(wide_fish_os_ht,
 # hull_os_ht <- wide_fish_os_ht %>% 
 #   group_by(Zone) %>% 
 #   slice(chull(-NMDS1, -NMDS2))
-# 
 # 
 # 
 # plot_wide_fish_os_ht_hulls <- plot_wide_fish_os_ht +
@@ -1495,7 +1503,7 @@ hull_os_ht <- wide_fish_os_ht %>%
 
 plot_wide_fish_os_ht_hulls <- plot_wide_fish_os_ht +
   geom_polygon(data = hull_os_ht, aes(x = -MDS1, y = -MDS2, group = cluster_2, fill = cluster_2),alpha = 0.3) + 
-  scale_fill_manual(values = c("purple4", "steelblue3", "springgreen4", "coral2","khaki4","black")) +
+  scale_fill_manual(values = c("coral2","springgreen4", "steelblue3","purple4" ,"black","khaki4")) +
   geom_text(x = 0.21, y = 0.17, label = c(paste("2D Stress:" ,round(NMDS_comm_fish_os_ht$stress,2), sep = " ")), color = "black", size = 8) +
   # guides(fill = guide_legend(title = "Cluster Group"))
 guides(fill = guide_legend(
@@ -1544,8 +1552,11 @@ plot_NMDS_os_ht_spp_vect <- plot_wide_fish_os_ht_hulls +
 
 plot_NMDS_os_ht_spp_vect
 
+new_plot_NMDS_os_ht_spp_vect = plot_NMDS_os_ht_spp_vect + scale_y_reverse()
 
-
+new_plot_NMDS_os_ht_spp_vect
+ggsave("figures/new_submodule_assemblage.png", new_plot_NMDS_os_ht_spp_vect,
+       width = 16, height = 12, dpi = 600)
 ggsave("figures/submodule_assemblage.png", plot_NMDS_os_ht_spp_vect,
        width = 16, height = 12, dpi = 600)
 
