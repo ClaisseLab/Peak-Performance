@@ -1056,6 +1056,14 @@ dens_sp_order <- dens_sp_os_ht %>%
 dens_sp_os_ht$Genus_spp <- factor(dens_sp_os_ht$Genus_spp, 
                                   levels = dens_sp_order$Genus_spp)
 
+dens_sp_os_ht <- dens_sp_os_ht %>% 
+  mutate(cluster = (case_when(startsWith(cluster, "Group 1") ~ "Group 4",
+                    startsWith(cluster, "Group 2") ~ "Group 3",
+                    startsWith(cluster, "Group 3") ~ "Group 2",
+                    startsWith(cluster, "Group 4") ~ "Group 1",
+                    startsWith(cluster, "Group 5") ~ "Group 6",
+                    startsWith(cluster, "Group 6") ~ "Group 5")))
+                              
 dens_sp_clust_heatmap <- dens_sp_os_ht %>% 
   group_by(cluster, Genus_spp) %>% 
   summarise(mean_clust_dens = mean(mean_dens), 
@@ -1063,7 +1071,7 @@ dens_sp_clust_heatmap <- dens_sp_os_ht %>%
             max_clust_dens = max(mean_dens),
             count_tt = n())
 
-group_color_lab <- c("purple4", "steelblue3", "springgreen4", "coral2", "khaki4","black")
+group_color_lab <- c("coral2","springgreen4", "steelblue3","purple4" ,"black","khaki4")
 
 heatmap_sp_clust<-dens_sp_clust_heatmap %>%
   ggplot(aes(x=cluster, y = Genus_spp)) +
@@ -1621,27 +1629,33 @@ os_ht_dendro <- color_labels(clust.comm_fish_os_ht, col = c("khaki4","black","pu
 
 os_ht_dendro <- color_branches(os_ht_dendro, col = c("khaki4","black","purple4", "steelblue3", "springgreen4", "coral2"), k = 6)
 
- os_ht_dendro <- os_ht_dendro %>%
-   rotate(24:2)
-
+ # os_ht_dendro <- os_ht_dendro %>%
+ #   rotate(24:2)
+ 
+ # dend <- as.dendrogram(clust.Comm_Gut_Wide_R_Rt_S)
+ # par(mar=c(5,1,1,12))
+ # 
+ # plot(rotate(dend, c(1:15, 20, 24, 26:27, 25, 29:30, 28, 23:21, 16:17, 18:19)), 
+ #      horiz = T,
+ #      xlab = "Dissimilarity",
+ #      xlim = c(0.4, 0))
 
 gg_os_ht_dend <- as.ggdend(os_ht_dendro)
 plot_gg_os_ht_dend <- ggplot(gg_os_ht_dend, horiz = T, offset_labels = -0.01)
 plot_gg_os_ht_dend <- plot_gg_os_ht_dend +
   theme_classic() +
   theme(plot.margin = margin(1,1,1,1, "cm")) +
-  theme(axis.title.y = element_blank(), axis.text.y = element_blank(), axis.ticks.y = element_blank(), axis.line.y = element_blank(), axis.title.x = element_text(vjust = - 1.2, hjust = .5)) +
+  theme(axis.title.y = element_blank(), axis.text.y = element_blank(), axis.ticks.y = element_blank(), legend.position = "none", axis.line.y = element_blank(), axis.title.x = element_text(vjust = - 1.2, hjust = .5)) +
   theme(text = element_text(size = 24)) +
   scale_y_reverse(breaks = c(0.3,0.2,0.1,0), expand=c(0,.1,0,.1)) + 
   labs(y = "Bray-Curtis Dissimilarity")
 
 
 
-
 plot_gg_os_ht_dend
 
 ggsave("figures/submodule_dendrogram.png", plot_gg_os_ht_dend,
-       width = 13, height = 7.5, dpi = 600)
+       width = 15, height = 7.5, dpi = 600)
 
 # Determining number of significant clusters
 # No longer supported looking for alternative
