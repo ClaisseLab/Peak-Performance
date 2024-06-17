@@ -1471,9 +1471,9 @@ wide_fish_os_ht <- wide_fish_os_ht %>%
 
 
 wide_fish_os_ht <- wide_fish_os_ht %>% 
-  mutate(Module = factor(Habitat_Type_2, levels = c("High Reef",
-                                            "Medium Reef",
-                                            "Low Reef",
+  mutate(Module = factor(Habitat_Type_2, levels = c("High Relief",
+                                            "Medium Relief",
+                                            "Low Relief",
                                             "High Ecotone",
                                             "Medium Ecotone",
                                             "Low Ecotone")))
@@ -1482,7 +1482,7 @@ wide_fish_os_ht <- wide_fish_os_ht %>%
 plot_wide_fish_os_ht <- ggplot(wide_fish_os_ht,
                                aes(-MDS1, -MDS2)) +
   geom_text(aes(label = os_lab), vjust = 2, hjust = .55, size = 4) +
-  geom_point(aes(color = cluster_2, shape = Module),size = 6) +
+  geom_point(aes(color = cluster_2, shape = Module),size = 6, stroke = 2) +
   scale_shape_manual(values = c(15, 16, 17, 0, 1, 2)) +
   scale_color_manual(values = c("coral2","springgreen4", "steelblue3","purple4" ,"black","khaki4")) +
   theme_classic() +
@@ -1490,7 +1490,7 @@ plot_wide_fish_os_ht <- ggplot(wide_fish_os_ht,
   theme(plot.margin = margin(1,2,1,1, "cm")) +
   theme(text = element_text(size = 16)) +
   guides(shape = guide_legend(title = "Habitat Type"),
-         color = "none") 
+         color = "none")
 
 #plot_wide_fish_os_ht
 # hull_os_ht <- wide_fish_os_ht %>% 
