@@ -1733,111 +1733,108 @@ write_csv(ado2.fish_os_ht_clus_table, "tables/ado2.fish_os_ht_clus_table.csv")
 
 #### Community Composition Stacked Bar Plots ----
 #start with the mean density per species per transect type 744 points (31 spp 24 transect types)
-dat_fish_os_ht <- dat_fish_os_ht %>% 
-  mutate(os_ht = paste(os, Habitat_Type))
+# dat_fish_os_ht <- dat_fish_os_ht %>% 
+#   mutate(os_ht = paste(os, Habitat_Type))
+# 
+# 
+# dat_fish_os_ht <- dat_fish_os_ht %>% 
+#   mutate(cluster = (case_when(startsWith(os_ht, "West Perpendicular High Relief") ~ "Group 2",
+#                               startsWith(os_ht, "West Perpendicular High Ecotone") ~ "Group 3",
+#                               startsWith(os_ht, "West Perpendicular Low Relief") ~ "Group 2",
+#                               startsWith(os_ht, "West Perpendicular Low Ecotone") ~ "Group 2",
+#                               startsWith(os_ht, "West Perpendicular Medium Relief") ~ "Group 1",
+#                               startsWith(os_ht, "West Perpendicular Medium Ecotone") ~ "Group 1",
+#                               startsWith(os_ht, "East Perpendicular High Relief") ~ "Group 1",
+#                               startsWith(os_ht, "East Perpendicular High Ecotone") ~ "Group 6",
+#                               startsWith(os_ht, "East Perpendicular Low Relief") ~ "Group 3",
+#                               startsWith(os_ht, "East Perpendicular Low Ecotone") ~ "Group 2",
+#                               startsWith(os_ht, "East Perpendicular Medium Relief") ~ "Group 2",
+#                               startsWith(os_ht, "East Perpendicular Medium Ecotone") ~ "Group 2",
+#                               startsWith(os_ht, "West Parallel High Relief") ~ "Group 1",
+#                               startsWith(os_ht, "West Parallel High Ecotone") ~ "Group 1",
+#                               startsWith(os_ht, "West Parallel Low Relief") ~ "Group 2",
+#                               startsWith(os_ht, "West Parallel Low Ecotone") ~ "Group 3",
+#                               startsWith(os_ht, "West Parallel Medium Relief") ~ "Group 1",
+#                               startsWith(os_ht, "West Parallel Medium Ecotone") ~ "Group 3",
+#                               startsWith(os_ht, "East Parallel High Relief") ~ "Group 2",
+#                               startsWith(os_ht, "East Parallel High Ecotone") ~ "Group 4",
+#                               startsWith(os_ht, "East Parallel Low Relief") ~ "Group 3",
+#                               startsWith(os_ht, "East Parallel Low Ecotone") ~ "Group 4",
+#                               startsWith(os_ht, "East Parallel Medium Relief") ~ "Group 4",
+#                               startsWith(os_ht, "East Parallel Medium Ecotone") ~ "Group 4")))
+# 
+# 
+# 
+# 
+# # Stacked bar plot with total densities observed
+# 
+# common_name_vect <- c("Blacksmith",
+#                       "Kelp Bass",
+#                       "Senorita",
+#                       "California Sheephead",
+#                       "Black Perch",
+#                       "Rainbow Seaperch",
+#                       "Barred Sand Bass",
+#                       "Opaleye",
+#                       "Pile Perch",
+#                       "Olive Rockfish",
+#                       "Rock Wrasse")
+# 
+# dat_fish_os_ht <- dat_fish_os_ht %>%
+#   mutate(cluster_2 = cluster)
+# 
+# 
+# dat_fish_os_ht <- dat_fish_os_ht %>% 
+#   mutate(Orientation =  case_when(startsWith(os, "West Par") ~ "Parallel",
+#                                   startsWith(os, "West Per") ~ "Perpendicular",
+#                                   startsWith(os, "East Par") ~ "Parallel",
+#                                   startsWith(os, "East Per") ~ "Perpendicular"))
 
+# dat_fish_os_ht <- dat_fish_os_ht %>%
+#   mutate(cluster_2 = str_replace_all(cluster_2, "Group 1", "Group 1: Perpendicular Up-current High Relief"),
+#          cluster_2 = str_replace_all(cluster_2, "Group 2", "Group 2: Perpendicular Down-current High Ecotone"),
+#          cluster_2 = str_replace_all(cluster_2, "Group 3", "Group 3: Sheltered Inshore Parallels"),
+#          cluster_2 = str_replace_all(cluster_2, "Group 4", "Group 4: Low Relief & Ecotones"),
+#          cluster_2 = str_replace_all(cluster_2, "Group 5", "Group 5: Intermediate"),
+#          cluster_2 = str_replace_all(cluster_2, "Group 6", "Group 6: Offshore Exposed High & Medium Relief"))
 
-dat_fish_os_ht <- dat_fish_os_ht %>% 
-  mutate(cluster = (case_when(startsWith(os_ht, "West Perpendicular High Relief") ~ "Group 1",
-                              startsWith(os_ht, "West Perpendicular High Ecotone") ~ "Group 4",
-                              startsWith(os_ht, "West Perpendicular Low Relief") ~ "Group 5",
-                              startsWith(os_ht, "West Perpendicular Low Ecotone") ~ "Group 5",
-                              startsWith(os_ht, "West Perpendicular Medium Relief") ~ "Group 6",
-                              startsWith(os_ht, "West Perpendicular Medium Ecotone") ~ "Group 6",
-                              startsWith(os_ht, "East Perpendicular High Relief") ~ "Group 6",
-                              startsWith(os_ht, "East Perpendicular High Ecotone") ~ "Group 2",
-                              startsWith(os_ht, "East Perpendicular Low Relief") ~ "Group 4",
-                              startsWith(os_ht, "East Perpendicular Low Ecotone") ~ "Group 5",
-                              startsWith(os_ht, "East Perpendicular Medium Relief") ~ "Group 5",
-                              startsWith(os_ht, "East Perpendicular Medium Ecotone") ~ "Group 5",
-                              startsWith(os_ht, "West Parallel High Relief") ~ "Group 6",
-                              startsWith(os_ht, "West Parallel High Ecotone") ~ "Group 6",
-                              startsWith(os_ht, "West Parallel Low Relief") ~ "Group 5",
-                              startsWith(os_ht, "West Parallel Low Ecotone") ~ "Group 4",
-                              startsWith(os_ht, "West Parallel Medium Relief") ~ "Group 6",
-                              startsWith(os_ht, "West Parallel Medium Ecotone") ~ "Group 4",
-                              startsWith(os_ht, "East Parallel High Relief") ~ "Group 5",
-                              startsWith(os_ht, "East Parallel High Ecotone") ~ "Group 3",
-                              startsWith(os_ht, "East Parallel Low Relief") ~ "Group 4",
-                              startsWith(os_ht, "East Parallel Low Ecotone") ~ "Group 3",
-                              startsWith(os_ht, "East Parallel Medium Relief") ~ "Group 3",
-                              startsWith(os_ht, "East Parallel Medium Ecotone") ~ "Group 3")))
-
-
-
-
-# Stacked bar plot with total densities observed
-
-common_name_vect <- c("Blacksmith",
-                      "Kelp Bass",
-                      "Senorita",
-                      "California Sheephead",
-                      "Black Perch",
-                      "Rainbow Seaperch",
-                      "Barred Sand Bass",
-                      "Opaleye",
-                      "Pile Perch",
-                      "Olive Rockfish",
-                      "Rock Wrasse")
-
-dat_fish_os_ht <- dat_fish_os_ht %>%
-  mutate(cluster_2 = cluster)
-
-dat_fish_os_ht <- dat_fish_os_ht %>% 
-  mutate(current =  case_when(startsWith(os, "West") ~ "Up-current",
-                              startsWith(os, "East") ~ "Down-current"))
-
-dat_fish_os_ht <- dat_fish_os_ht %>% 
-  mutate(Orientation =  case_when(startsWith(os, "West Par") ~ "Parallel",
-                                  startsWith(os, "West Per") ~ "Perpendicular",
-                                  startsWith(os, "East Par") ~ "Parallel",
-                                  startsWith(os, "East Per") ~ "Perpendicular"))
-
-dat_fish_os_ht <- dat_fish_os_ht %>%
-  mutate(cluster_2 = str_replace_all(cluster_2, "Group 1", "Group 1: Perpendicular Up-current High Relief"),
-         cluster_2 = str_replace_all(cluster_2, "Group 2", "Group 2: Perpendicular Down-current High Ecotone"),
-         cluster_2 = str_replace_all(cluster_2, "Group 3", "Group 3: Sheltered Inshore Parallels"),
-         cluster_2 = str_replace_all(cluster_2, "Group 4", "Group 4: Low Relief & Ecotones"),
-         cluster_2 = str_replace_all(cluster_2, "Group 5", "Group 5: Intermediate"),
-         cluster_2 = str_replace_all(cluster_2, "Group 6", "Group 6: Offshore Exposed High & Medium Relief"))
-
-dat_fish_os_ht <- dat_fish_os_ht %>%
-  mutate(stack_lab = paste(Orientation, current, Habitat_Type))
-
-dat_fish_os_ht <- dat_fish_os_ht %>%
-  mutate(stack_lab = str_replace(stack_lab, "Parallel Up-current High Ecotone", "Par. Offshore High Ecotone"),
-         stack_lab = str_replace(stack_lab, "Parallel Up-current High Relief", "Par. Offshore High Relief"),
-         stack_lab = str_replace(stack_lab, "Parallel Up-current Medium Ecotone", "Par. Offshore Medium Ecotone"),
-         stack_lab = str_replace(stack_lab, "Parallel Up-current Medium Relief", "Par. Offshore Medium Relief"),
-         stack_lab = str_replace(stack_lab, "Parallel Up-current Low Ecotone", "Par. Offshore Low Ecotone"),
-         stack_lab = str_replace(stack_lab, "Parallel Up-current Low Relief", "Par. Offshore Low Relief"),
-         stack_lab = str_replace(stack_lab, "Parallel Down-current High Ecotone", "Par. Inshore High Ecotone"),
-         stack_lab = str_replace(stack_lab, "Parallel Down-current High Relief", "Par. Inshore High Relief"),
-         stack_lab = str_replace(stack_lab, "Parallel Down-current Medium Ecotone", "Par. Inshore Medium Ecotone"),
-         stack_lab = str_replace(stack_lab, "Parallel Down-current Medium Relief", "Par. Inshore Medium Relief"),
-         stack_lab = str_replace(stack_lab, "Parallel Down-current Low Ecotone", "Par. Inshore Low Ecotone"),
-         stack_lab = str_replace(stack_lab, "Parallel Down-current Low Relief", "Par. Inshore Low Relief"),
-         stack_lab = str_replace(stack_lab, "Perpendicular Up-current High Ecotone", "Perp. West High Ecotone"),
-         stack_lab = str_replace(stack_lab, "Perpendicular Up-current High Relief", "Perp. West High Relief"),
-         stack_lab = str_replace(stack_lab, "Perpendicular Up-current Medium Ecotone", "Perp. West Medium Ecotone"),
-         stack_lab = str_replace(stack_lab, "Perpendicular Up-current Medium Relief", "Perp. West Medium Relief"),
-         stack_lab = str_replace(stack_lab, "Perpendicular Up-current Low Ecotone", "Perp. West Low Ecotone"),
-         stack_lab = str_replace(stack_lab, "Perpendicular Up-current Low Relief", "Perp. West Low Relief"),
-         stack_lab = str_replace(stack_lab, "Perpendicular Down-current High Ecotone", "Perp. East High Ecotone"),
-         stack_lab = str_replace(stack_lab, "Perpendicular Down-current High Relief", "Perp. East High Relief"),
-         stack_lab = str_replace(stack_lab, "Perpendicular Down-current Medium Ecotone", "Perp. East Medium Ecotone"),
-         stack_lab = str_replace(stack_lab, "Perpendicular Down-current Medium Relief", "Perp. East Medium Relief"),
-         stack_lab = str_replace(stack_lab, "Perpendicular Down-current Low Ecotone", "Perp. East Low Ecotone"),
-         stack_lab = str_replace(stack_lab, "Perpendicular Down-current Low Relief", "Perp. East Low Relief"))
-
-clust_col <- c("khaki4", "black", "purple4","purple4","purple4","purple4", "steelblue3","steelblue3","steelblue3","steelblue3","steelblue3", "springgreen4","springgreen4","springgreen4","springgreen4","springgreen4","springgreen4","springgreen4", "coral2", "coral2", "coral2", "coral2", "coral2", "coral2")
-
-
-clust_col_2 <- c("coral2","coral2","coral2","coral2","coral2","coral2","springgreen4","springgreen4","springgreen4","springgreen4","springgreen4","springgreen4","springgreen4","steelblue3","steelblue3","steelblue3","steelblue3","steelblue3","purple4","purple4","purple4","purple4","khaki4","black")
-
-dat_fish_os_ht <- dat_fish_os_ht %>%
-  mutate(group_lab = paste(cluster, stack_lab))
-
+# dat_fish_os_ht <- dat_fish_os_ht %>%
+#   mutate(stack_lab = paste(Orientation, current, Habitat_Type))
+# 
+# dat_fish_os_ht <- dat_fish_os_ht %>%
+#   mutate(stack_lab = str_replace(stack_lab, "Parallel Up-current High Ecotone", "Par. Offshore High Ecotone"),
+#          stack_lab = str_replace(stack_lab, "Parallel Up-current High Relief", "Par. Offshore High Relief"),
+#          stack_lab = str_replace(stack_lab, "Parallel Up-current Medium Ecotone", "Par. Offshore Medium Ecotone"),
+#          stack_lab = str_replace(stack_lab, "Parallel Up-current Medium Relief", "Par. Offshore Medium Relief"),
+#          stack_lab = str_replace(stack_lab, "Parallel Up-current Low Ecotone", "Par. Offshore Low Ecotone"),
+#          stack_lab = str_replace(stack_lab, "Parallel Up-current Low Relief", "Par. Offshore Low Relief"),
+#          stack_lab = str_replace(stack_lab, "Parallel Down-current High Ecotone", "Par. Inshore High Ecotone"),
+#          stack_lab = str_replace(stack_lab, "Parallel Down-current High Relief", "Par. Inshore High Relief"),
+#          stack_lab = str_replace(stack_lab, "Parallel Down-current Medium Ecotone", "Par. Inshore Medium Ecotone"),
+#          stack_lab = str_replace(stack_lab, "Parallel Down-current Medium Relief", "Par. Inshore Medium Relief"),
+#          stack_lab = str_replace(stack_lab, "Parallel Down-current Low Ecotone", "Par. Inshore Low Ecotone"),
+#          stack_lab = str_replace(stack_lab, "Parallel Down-current Low Relief", "Par. Inshore Low Relief"),
+#          stack_lab = str_replace(stack_lab, "Perpendicular Up-current High Ecotone", "Perp. West High Ecotone"),
+#          stack_lab = str_replace(stack_lab, "Perpendicular Up-current High Relief", "Perp. West High Relief"),
+#          stack_lab = str_replace(stack_lab, "Perpendicular Up-current Medium Ecotone", "Perp. West Medium Ecotone"),
+#          stack_lab = str_replace(stack_lab, "Perpendicular Up-current Medium Relief", "Perp. West Medium Relief"),
+#          stack_lab = str_replace(stack_lab, "Perpendicular Up-current Low Ecotone", "Perp. West Low Ecotone"),
+#          stack_lab = str_replace(stack_lab, "Perpendicular Up-current Low Relief", "Perp. West Low Relief"),
+#          stack_lab = str_replace(stack_lab, "Perpendicular Down-current High Ecotone", "Perp. East High Ecotone"),
+#          stack_lab = str_replace(stack_lab, "Perpendicular Down-current High Relief", "Perp. East High Relief"),
+#          stack_lab = str_replace(stack_lab, "Perpendicular Down-current Medium Ecotone", "Perp. East Medium Ecotone"),
+#          stack_lab = str_replace(stack_lab, "Perpendicular Down-current Medium Relief", "Perp. East Medium Relief"),
+#          stack_lab = str_replace(stack_lab, "Perpendicular Down-current Low Ecotone", "Perp. East Low Ecotone"),
+#          stack_lab = str_replace(stack_lab, "Perpendicular Down-current Low Relief", "Perp. East Low Relief"))
+# 
+# clust_col <- c("khaki4", "black", "purple4","purple4","purple4","purple4", "steelblue3","steelblue3","steelblue3","steelblue3","steelblue3", "springgreen4","springgreen4","springgreen4","springgreen4","springgreen4","springgreen4","springgreen4", "coral2", "coral2", "coral2", "coral2", "coral2", "coral2")
+# 
+# 
+# clust_col_2 <- c("coral2","coral2","coral2","coral2","coral2","coral2","springgreen4","springgreen4","springgreen4","springgreen4","springgreen4","springgreen4","springgreen4","steelblue3","steelblue3","steelblue3","steelblue3","steelblue3","purple4","purple4","purple4","purple4","khaki4","black")
+# 
+# dat_fish_os_ht <- dat_fish_os_ht %>%
+#   mutate(group_lab = paste(cluster, stack_lab))
+# 
 
 
 
@@ -1998,6 +1995,7 @@ dat_fish_spp = dat_fish_spp %>%
                                                         "High Ecotone",
                                                         "Medium Ecotone",
                                                         "Low Ecotone")))
+
 
 dat_fish_spp <- dat_fish_spp %>% 
   mutate(transect = paste(Module, Module_Side, Habitat_Type),
