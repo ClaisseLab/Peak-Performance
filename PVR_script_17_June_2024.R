@@ -1397,14 +1397,6 @@ wide_fish_os_ht <- wide_fish_os_ht %>%
 ### ADD CLUSTER ANALYSIS - WHICH DEFINES THESE GROUPS
 #### Key Edits ----
 
-
-
-
-
-
-
-
-
 wide_fish_os_ht <- wide_fish_os_ht %>% 
   mutate(cluster = (case_when(startsWith(os_ht, "West Perpendicular High Relief") ~ "Group 5",
                               startsWith(os_ht, "West Perpendicular High Ecotone") ~ "Group 3",
@@ -1471,18 +1463,25 @@ wide_fish_os_ht <- wide_fish_os_ht %>%
 
 
 wide_fish_os_ht <- wide_fish_os_ht %>% 
-  mutate(Module = factor(Habitat_Type_2, levels = c("High Relief",
-                                            "Medium Relief",
-                                            "Low Relief",
-                                            "High Ecotone",
-                                            "Medium Ecotone",
-                                            "Low Ecotone")))
+  mutate(Module = factor(Habitat_Type_2))
+         
+wide_fish_os_ht <- wide_fish_os_ht %>% 
+  mutate(Module = str_replace(Module, "High Relief", "High Reef"),
+         Module = str_replace(Module, "Medium Relief", "Medium Reef"),
+         Module = str_replace(Module, "Low Relief", "Low Reef"))
 
+wide_fish_os_ht <- wide_fish_os_ht %>% 
+  mutate(Module = factor(Module, levels = c("High Reef",
+                                                    "Medium Reef",
+                                                    "Low Reef",
+                                                    "High Ecotone",
+                                                    "Medium Ecotone",
+                                                    "Low Ecotone")))
 
 plot_wide_fish_os_ht <- ggplot(wide_fish_os_ht,
                                aes(-MDS1, -MDS2)) +
-  geom_text(aes(label = os_lab), vjust = 2, hjust = .55, size = 4) +
-  geom_point(aes(color = cluster_2, shape = Module),size = 6, stroke = 2) +
+  geom_text(aes(label = os_lab), vjust = 3, hjust = .4, size = 5) +
+  geom_point(aes(color = cluster_2, shape = Module),size = 7, stroke = 3) +
   scale_shape_manual(values = c(15, 16, 17, 0, 1, 2)) +
   scale_color_manual(values = c("coral2","springgreen4", "steelblue3","purple4" ,"black","khaki4")) +
   theme_classic() +
@@ -1492,6 +1491,10 @@ plot_wide_fish_os_ht <- ggplot(wide_fish_os_ht,
   guides(shape = guide_legend(title = "Habitat Type"),
          color = "none")
 
+plot_wide_fish_os_ht = plot_wide_fish_os_ht +
+  theme(legend.key = element_rect(fill = "white", colour = NA))
+plot_wide_fish_os_ht =plot_wide_fish_os_ht +
+  guides(shape = guide_legend(override.aes = list(stroke = 1)))
 #plot_wide_fish_os_ht
 # hull_os_ht <- wide_fish_os_ht %>% 
 #   group_by(Zone) %>% 
@@ -1550,7 +1553,7 @@ plot_NMDS_os_ht_spp_vect <- plot_wide_fish_os_ht_hulls +
   geom_segment(data = spp_scrs, aes(x = 0, xend = -NMDS1*.275, y = 0, yend = -NMDS2*.27, shape = NULL),
                arrow = arrow(length = unit(.25, "cm")),
                color = "grey10", lwd = 0.3) +
-  geom_text(data = spp_scrs, aes(x = -NMDS1*.27, y = -NMDS2*.27, label = common_name, shape = NULL), fontface = "bold", color = "black", size = 6) +
+  geom_text(data = spp_scrs, aes(x = -NMDS1*.27, y = -NMDS2*.27, label = common_name, shape = NULL), fontface = "bold", color = "black", size = 7) +
   theme(legend.position = c(0.01, .99),
         legend.justification = c(0, 1),   
         legend.background = element_rect(color = "black", fill = "white", size = 0.5),
