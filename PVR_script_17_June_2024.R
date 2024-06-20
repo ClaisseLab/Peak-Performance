@@ -1,7 +1,7 @@
-#### Final Thesis Script ----
-#### Author: James W. Sturges
-#### Project Title: Assessing Community Structure and Fine-Scale Fish Habitat Use Patterns on the Palos Verdes Reef Restoration Project
-#### Last Updated: July 12 2022
+#### Project Information ----
+#### Project Title: Peak Performance: vertical relief influences fish density and assemblage structure on heterogenous restoration reef
+#### Authors: James W. Sturges & Jeremy T. Claisse
+#### Last Updated: Jun3 20 2024
 
 #### Required Packages ----
 library(here)
@@ -12,7 +12,6 @@ library(vegan)
 library(tidyverse)
 library(flextable) 
 library(ggrepel)
-#library(clustsig) no longer supported
 library(officer)
 library(wesanderson)
 library(dendextend)
@@ -23,14 +22,19 @@ here()
 
 
 #### Importing Cleaned Data ----
-#This imports our data set from the raw EventMeasure files
-#We have already cleaned these data to remove transect indicator measurements
+# This imports our data set from the raw EventMeasure observation files
+# details on data cleaning can be found in the dat.EMObs_Cleaning.R
 source("dat_EMObs_Cleaning.R")
 
 set_flextable_defaults(font.family = "Arial", font.size = 9, digits = 1, padding = 0.1)
 
 
-#### mean distance per habitat type flextable ----
+
+#### Scaling for Sampling Effort ----
+# mean distance per habitat type flextable 
+# This estimates the mean length of video transect areas across each habitat type
+# As expected we traveled further on taller modules
+# We standardized ecotone survey lengths to 16 m and adjusted our fish density estimates for reef transects
 
 ht_dist_st <- ht_dist_st %>% 
   mutate(new_names = case_when(startsWith(Habitat_Type, "Mid_High") ~ "High Relief",
@@ -68,7 +72,11 @@ write_csv(ht_dist_st, "tables/ht_dist_st.csv")
 # save_as_docx(ht_dist_ft, path = "ht_dist_ft.docx")
 
 
-#### swim time per transect east v west comparison ----
+
+## swim time per transect east v west comparison 
+
+# We adjusted reef transect lengths based on ecotone swim rates for each module
+# This assumes that during a single dive we maintained relative constant speed and accounts for sampling intensity variance between dives and days
 
 time_comp_plot <- time_comp_plot +
   theme_classic() +
@@ -90,7 +98,8 @@ time_comp_plot
 
 
 
-#### create new variables for Zone and current flow ----
+
+# create new variables for Zone and current flow 
 
 dat_fish_2m_wide <- dat_fish_2m_wide %>% 
   mutate(Zone = case_when(startsWith(Habitat_Type, "Ecotone") ~ "Ecotone",
@@ -112,7 +121,8 @@ dat_fish_2m_wide <- dat_fish_2m_wide %>%
                               startsWith(Module_Side, "East") ~ "Downcurrent"))
 
 #### Creating dat_fish_t ----
-# 31 species observed over 216 transects
+
+# 31 species were observed over 216 "transects" on 18 modules
 # creates density values for each species across each unique transect
 dat_fish_t <- dat_fish_2m_wide %>% 
   group_by(Module, Module_Side, Habitat_Type, Genus_spp) %>% 
@@ -264,7 +274,7 @@ spp_ID_ft <- flextable(spp_ID,
 spp_ID_ft
 write_csv(spp_ID, "tables/spp_ID.csv")
 # save_as_docx(spp_ID_ft, path = "spp_ID_ft.docx")
-#### Focal Species summary table ----
+#### Focal Species Summary Table ----
 # fish_images <- read.csv("focal_spp_image.csv")
 # fish_images <- fish_images  
   #rename(Genus_spp = ï..Genus_spp)
@@ -325,10 +335,6 @@ focal_spp_dens_ht <- focal_spp_dens_ht %>%
 focal_spp_st <- focal_spp_st %>% 
   left_join(focal_spp_dens_ht)
 
-# focal_spp_st <- focal_spp_st %>% 
-#   left_join(fish_images)
-
-
 
 focal_spp_ft <- flextable(focal_spp_st,
                           col_keys = c("Genus_spp", "Code", "mods_obs",
@@ -352,112 +358,10 @@ focal_spp_ft <- flextable(focal_spp_st,
           value = as_paragraph(as_i(Genus_spp))) %>%
   merge_v(part = "header")
 
-# focal_spp_ft <- flextable(focal_spp_st,
-#                           col_keys = c("Genus_spp", "Code",
-#                                        "n", "max_length", "min_length", "Ecotone_High","Ecotone_Medium","Ecotone_Low", "Mid_High","Mid_Medium","Mid_Low")) %>% 
-#   add_header_row(colwidths = c(2,1,2,6), values = c("Species Name", "Total Observations", "Length (mm)", "Total Density Across Habitat Types")) %>% 
-# set_header_labels(Genus_spp = "Species Name",
-#                     Code = "Species Name",
-#                     n = "Total Observations", 
-#                     max_length = "Max",
-#                     min_length = "Min",
-#                     Ecotone_High = "EH",
-#                     Ecotone_Medium = "EM",
-#                     Ecotone_Low = "EL",
-#                     Mid_High = "MH",
-#                     Mid_Medium = "MM",
-#                     Mid_Low = "ML") %>% 
-#   # add_footer_lines("Focal Species Summary Table") %>% 
-#   #  bg(i = ~ Ecotone_High > 5000,
-#   #        j = c("Ecotone_High"),
-#   #        bg = "green") %>% 
-#   #  bg(i = ~ Mid_High > 306 & Mid_High < 307,
-#   #     j = c("Mid_High"),
-#   #     bg = "green") %>% 
-#   #  bg(i = ~ Ecotone_High > 646 & Ecotone_High < 647,
-#   #     j = c("Ecotone_High"),
-#   #     bg = "green") %>% 
-#   #  bg(i = ~ Mid_Medium > 226 & Mid_Medium < 227,
-#   #     j = c("Mid_Medium"),
-#   #     bg = "green") %>% 
-#   #  bg(i = ~ Ecotone_Low > 106 & Ecotone_Low < 107,
-#   #     j = c("Ecotone_Low"),
-#   #     bg = "green") %>% 
-#   #  bg(i = ~ Mid_Medium > 113 & Mid_Medium < 114,
-#   #     j = c("Mid_Medium"),
-#   #     bg = "green") %>% 
-#   #  bg(i = ~ Ecotone_High > 84 & Ecotone_High < 85,
-#   #     j = c("Ecotone_High"),
-#   #     bg = "green") %>% 
-#   #  bg(i = ~ Mid_Medium > 84 & Mid_Medium < 86,
-#   #     j = c("Mid_Medium"),
-#   #     bg = "green") %>% 
-#   #  bg(i = ~ Mid_High > 56 & Mid_High < 57,
-#   #     j = c("Mid_High"),
-#   #     bg = "green") %>% 
-#   #  bg(i = ~ Ecotone_High > 53 & Ecotone_High < 54,
-#   #     j = c("Ecotone_High"),
-#   #     bg = "green") %>% 
-#   #  bg(i = ~ Ecotone_High > 40 & Ecotone_High < 41,
-#   #     j = c("Ecotone_High"),
-#   #     bg = "green") %>% 
-#    colformat_double(digits = 1) %>%
-#    theme_box() %>%
-#    align(align = "center") %>%
-#    align(part = "header", align = "center") %>% 
-#  compose(j = "Genus_spp",
-#            value = as_paragraph(as_i(Genus_spp))) %>% 
-#   #  bg(part = "header", j = c("Mid_High", "Mid_Medium", "Mid_Low"), bg = "azure4") %>% 
-#   #  bg(part = "header", j = c("Ecotone_High", "Ecotone_Medium", "Ecotone_Low"), bg = "blanchedalmond") %>% 
-#   # bg(i = ~ Mid_Low > 1194 & Mid_Low < 1195,
-#   #    j = c("Mid_Low"),
-#   #    bg = "red") %>% 
-#   # bg(i = ~ Ecotone_Medium > 156 & Ecotone_Medium < 157,
-#   #    j = c("Ecotone_Medium"),
-#   #    bg = "red") %>% 
-#   # bg(i = ~ Ecotone_Low > 84 & Ecotone_Low < 85,
-#   #    j = c("Ecotone_Low"),
-#   #    bg = "red") %>% 
-#   # bg(i = ~ Mid_Low > 71 & Mid_Low < 72,
-#   #    j = c("Mid_Low"),
-#   #    bg = "red") %>% 
-#   # bg(i = ~ Mid_Low > 70 & Mid_Low < 71,
-#   #    j = c("Mid_Low"),
-#   #    bg = "red") %>% 
-#   # bg(i = ~ Ecotone_High > 37 & Ecotone_High < 38,
-#   #    j = c("Ecotone_High"),
-#   #    bg = "red") %>% 
-#   # bg(i = ~ Mid_High > 26 & Mid_High < 27,
-#   #    j = c("Mid_High"),
-#   #    bg = "red") %>% 
-#   # bg(i = ~ Ecotone_Low > 12 & Ecotone_Low < 13,
-#   #    j = c("Ecotone_Low"),
-#   #    bg = "red") %>% 
-#   # bg(i = ~ Ecotone_Medium > 12 & Ecotone_Medium < 13,
-#   #    j = c("Ecotone_Medium"),
-#   #    bg = "red") %>% 
-#   # bg(i = ~ Ecotone_Medium > 21 & Ecotone_Medium < 22,
-#   #    j = c("Ecotone_Medium"),
-#   #    bg = "red") %>% 
-#   # bg(i = ~ Ecotone_High > 21 & Ecotone_High < 22,
-#   #    j = c("Ecotone_High"),
-#   #    bg = "red") %>% 
-#   # bg(i = ~ Mid_High > 13 & Mid_High < 14,
-#   #    j = c("Mid_High"),
-#   #    bg = "red") %>% 
-#   # bg(i = ~ Mid_High > 4 & Mid_High < 5,
-#   #    j = c("Mid_High"),
-#   #    bg = "red") %>% 
-#    merge_v(part = "header")
-
-
-
 
 #focal_spp_ft
 write_csv(focal_spp_st, "tables/focal_spp_st.csv")
 # save_as_docx(focal_spp_ft, path = "focal_spp_ft.docx")
-
-
 
 #### Species Richness ----
 
@@ -753,15 +657,8 @@ spp_rich_clust_ft <- flextable(spp_rich_clust,
                     mean_sr_focal = "Mean",
                     sd_sr_focal = "sd")%>% 
   colformat_double(digits = 1) %>%
-  # theme_box() %>%
   align(align = "center") %>%
   align(part = "header", align = "center") %>%
-  # bg(j = "cluster", i = ~ cluster == "Group 1", bg = "gray", part = "body") %>% 
-  # bg(j = "cluster", i = ~ cluster == "Group 2", bg = "khaki4", part = "body") %>% 
-  # bg(j = "cluster", i = ~ cluster == "Group 3", bg = "purple4", part = "body") %>% 
-  # bg(j = "cluster", i = ~ cluster == "Group 4", bg = "steelblue3", part = "body") %>% 
-  # bg(j = "cluster", i = ~ cluster == "Group 5", bg = "springgreen4", part = "body") %>% 
-  # bg(j = "cluster", i = ~ cluster == "Group 6", bg = "coral2", part = "body") %>% 
   merge_v(part = "header")
 
 spp_rich_clust_ft
@@ -1049,7 +946,7 @@ write_csv(dens_sp_os_ht, "tables/dens_sp_os_ht.csv")
 # save_as_docx(dens_sp_os_ht_ft, path = "dens_sp_os_ht_ft.docx")
 
 
-####  Heatmap ----
+#### Heatmap ----
 dens_sp_order <- dens_sp_os_ht %>% 
   group_by(Genus_spp) %>% 
   summarise(mean_dens = mean(mean_dens)) %>% 
@@ -1142,7 +1039,7 @@ dens_sp_ht_ft <- flextable(dens_sp_ht,
   merge_v(part = "header")
 
 dens_sp_ht_ft
-#### Module Level Community Analysis ----
+#### Module Assemblage NMDS ----
 dat_fish_ht_mod_18 <- dat_fish_t %>% 
   group_by(Module, Genus_spp) %>% 
   summarise(dens_100m2 = mean(dens_100m2)) %>% 
@@ -1236,7 +1133,7 @@ ggsave("figures/module_assemblage.png", plot_wide_fish_ht_mod_18_hulls,
        width = 6, height = 8, dpi = 600)
 
 
-#### Cluster Analysis for mod 18 ----
+#### Module Assemblage Cluster Analysis ----
 wide_fish_ht_mod_18 <- wide_fish_ht_mod_18 %>% 
   mutate(dend_lab = paste(Module, construction_group, mid_high_hgt_m))
 
@@ -1342,7 +1239,7 @@ write_csv(ado_mod_18_table, "tables/ado_mod_18_table.csv")
 
 
 
-#### Community Composition OS + HT ----
+#### Sub-module Assemblage NMDS  ----
 dat_fish_os_ht <- dat_fish_t %>% 
   group_by(Habitat_Type, os, Genus_spp) %>% 
   summarise(dens_100m2 = mean(dens_100m2)) %>% 
@@ -1397,8 +1294,6 @@ wide_fish_os_ht <- wide_fish_os_ht %>%
 
 
 ### ADD CLUSTER ANALYSIS - WHICH DEFINES THESE GROUPS
-#### Key Edits ----
-
 wide_fish_os_ht <- wide_fish_os_ht %>% 
   mutate(cluster = (case_when(startsWith(os_ht, "West Perpendicular High Relief") ~ "Group 5",
                               startsWith(os_ht, "West Perpendicular High Ecotone") ~ "Group 3",
@@ -1433,14 +1328,6 @@ wide_fish_os_ht <- wide_fish_os_ht %>%
 
 wide_fish_os_ht <- wide_fish_os_ht %>%
   mutate(cluster_2 = cluster)
-
-# wide_fish_os_ht <- wide_fish_os_ht %>%
-#   mutate(cluster_2 = str_replace_all(cluster_2, "Group 6", "Group 6: Perpendicular Inshore High Relief"),
-#          cluster_2 = str_replace_all(cluster_2, "Group 5", "Group 5: Perpendicular Offshore High Ecotone"),
-#          cluster_2 = str_replace_all(cluster_2, "Group 1", "Group 1: Sheltered Inshore Parallels"),
-#          cluster_2 = str_replace_all(cluster_2, "Group 2", "Group 2: Low Relief & Ecotones"),
-#          cluster_2 = str_replace_all(cluster_2, "Group 3", "Group 3: Intermediate"),
-#          cluster_2 = str_replace_all(cluster_2, "Group 4", "Group 4: Offshore High & Medium Relief"))
 
 
 wide_fish_os_ht <- wide_fish_os_ht %>% 
@@ -1630,9 +1517,9 @@ dis.comm_fish_os_ht <- vegdist(comm_fish_os_ht)
 clust.comm_fish_os_ht <- hclust(dis.comm_fish_os_ht, "average")
 
 #Add color labeles and branches based on the NMDS groups
-os_ht_dendro <- color_labels(clust.comm_fish_os_ht, col = c("khaki4","black","purple4", "steelblue3", "springgreen4", "coral2"), k = 6)
+os_ht_dendro <- color_labels(clust.comm_fish_os_ht, col = c("black","black","black", "black", "black", "black"), k = 6)
 
-os_ht_dendro <- color_branches(os_ht_dendro, col = c("khaki4","black","purple4", "steelblue3", "springgreen4", "coral2"), k = 6)
+os_ht_dendro <- color_branches(os_ht_dendro, col = c("black","black","black", "black", "black", "black"), k = 6)
 
  # os_ht_dendro <- os_ht_dendro %>%
  #   rotate(24:2)
@@ -2028,7 +1915,7 @@ for(species_ in species){
          width = 9, height = 8, dpi = 600)
 }
 
-#### Size distribution analysis ----
+#### Size Class Analysis ----
 dat_fish_l <-dat_fish_l %>% 
   mutate(Habitat_Type = str_replace_all(Habitat_Type, "Ecotone_High", "High Ecotone"),
          Habitat_Type = str_replace_all(Habitat_Type, "Ecotone_Medium", "Medium Ecotone"),
@@ -2089,255 +1976,105 @@ dat_fish_l <-dat_fish_l %>%
 
 # chromis_size
 
-#
- for(species_ in species){
-   species_plots[[species_]] <- dat_fish_l %>%
-     filter(Genus_spp == species_) %>%
-   group_by(cluster) %>%
-   ggplot(aes(x = Length, fill = cluster)) +
-   geom_histogram(position = "identity", alpha = 0.7, bins = 30) +
-   theme_classic() +
-     ggtitle(species_) +
-   scale_fill_manual(values = c("black", "khaki4", "purple4", "steelblue3", "springgreen4", "coral2")) +
-   guides(color = guide_legend(title = "Cluster Group")) +
-   labs(x = "Total Length (mm)", y = "Observations") +
-     facet_grid(.~cluster, rows = vars(cluster), cols = vars(Length))
-      scale_x_discrete(expand = c(0,0)) +
-     scale_y_continuous(expand = c(0,0))
- print(species_plots[[species_]])}
-
-#Change y axis label (proportional to transect numbers)
-
-chromis_size_hist <- dat_fish_l %>%
-  # mutate(Habitat_Type = fct_relevel(Habitat_Type, levels = c(
-  #   "High Relief",
-  #   "Medium Relief",
-  #   "Low Relief",
-  #   "High Ecotone",
-  #   "Medium Ecotone",
-  #   "Low Ecotone"))) %>% 
-  filter(Genus_spp == "Chromis punctipinnis") %>%
-  ggplot(aes(x = Length, fill = cluster)) + 
-  geom_histogram(binwidth = 5, position = "stack", alpha = 0.7) +
-  scale_fill_manual(values = c("black", "khaki4", "purple4", "steelblue3", "springgreen4", "coral2")) +
-  theme_classic() +
-  guides(fill = guide_legend(title = "Cluster Group")) +
-  labs(x = "Total Length (mm)", y = "Chromis Abundance") +
-  theme(legend.position = "top", legend.direction = "horizontal") +
-  facet_grid(rows = vars(Habitat_Type))
-# , scales = "free_y")
-
-
-chromis_size_hist
-
-
-# ggsave("figures/chromis_size_hist.png", chromis_size_hist,
-#        width = 9, height = 10, dpi = 600)
-
-kelp_bass_size_hist <- dat_fish_l %>%
-  # mutate(Habitat_Type = fct_relevel(Habitat_Type, levels = c(
-  #   "High Relief",
-  #   "Medium Relief",
-  #   "Low Relief",
-  #   "High Ecotone",
-  #   "Medium Ecotone",
-  #   "Low Ecotone"))) %>% 
-  filter(Genus_spp == "Paralabrax clathratus") %>%
-  ggplot(aes(x = Length, fill = cluster_2)) +
-  geom_histogram(binwidth = 25, position = "stack", alpha = 0.7) +
-  scale_fill_manual(values = c("black", "khaki4", "purple4", "steelblue3", "springgreen4", "coral2")) +
-  theme_classic() +
-  guides(fill = guide_legend(title = "Cluster Group")) +
-  labs(x = "Total Length (mm)", y = "Kelp Bass Abundance") +
-  theme(legend.position = "top", legend.direction = "horizontal") +
-  facet_grid(rows = vars(Habitat_Type))
-# , scales = "free_y")
-
-kelp_bass_size_hist
-
-# ggsave("figures/kelp_bass_size_hist.png", kelp_bass_size_hist,
-#        width = 9, height = 10, dpi = 600)
-
-
-sheephead_size_hist <- dat_fish_l %>%
-  # mutate(Habitat_Type = fct_relevel(Habitat_Type, levels = c(
-  #   "High Relief",
-  #   "Medium Relief",
-  #   "Low Relief",
-  #   "High Ecotone",
-  #   "Medium Ecotone",
-  #   "Low Ecotone"))) %>% 
-  filter(Genus_spp == "Semicossyphus pulcher") %>%
-  ggplot(aes(x = Length, fill = cluster_2)) +
-  geom_histogram(position = "stack", alpha = 0.7, binwidth = 20) +
-  scale_fill_manual(values = c("black", "khaki4", "purple4", "steelblue3", "springgreen4", "coral2")) +
-  theme_classic() +
-  guides(fill = guide_legend(title = "Cluster Group")) +
-  labs(x = "Total Length (mm)", y = "Sheephead Abundance") +
-  theme(legend.position = "top", legend.direction = "horizontal") +
-  facet_grid(rows = vars(Habitat_Type))
-# , scales = "free_y")
-
-
-sheephead_size_hist
+# #
+#  for(species_ in species){
+#    species_plots[[species_]] <- dat_fish_l %>%
+#      filter(Genus_spp == species_) %>%
+#    group_by(cluster) %>%
+#    ggplot(aes(x = Length, fill = cluster)) +
+#    geom_histogram(position = "identity", alpha = 0.7, bins = 30) +
+#    theme_classic() +
+#      ggtitle(species_) +
+#    scale_fill_manual(values = c("black", "khaki4", "purple4", "steelblue3", "springgreen4", "coral2")) +
+#    guides(color = guide_legend(title = "Cluster Group")) +
+#    labs(x = "Total Length (mm)", y = "Observations") +
+#      facet_grid(.~cluster, rows = vars(cluster), cols = vars(Length))
+#       scale_x_discrete(expand = c(0,0)) +
+#      scale_y_continuous(expand = c(0,0))
+#  print(species_plots[[species_]])}
+# 
+# #Change y axis label (proportional to transect numbers)
+# 
+# chromis_size_hist <- dat_fish_l %>%
+#   # mutate(Habitat_Type = fct_relevel(Habitat_Type, levels = c(
+#   #   "High Relief",
+#   #   "Medium Relief",
+#   #   "Low Relief",
+#   #   "High Ecotone",
+#   #   "Medium Ecotone",
+#   #   "Low Ecotone"))) %>% 
+#   filter(Genus_spp == "Chromis punctipinnis") %>%
+#   ggplot(aes(x = Length, fill = cluster)) + 
+#   geom_histogram(binwidth = 5, position = "stack", alpha = 0.7) +
+#   scale_fill_manual(values = c("coral2","springgreen4", "steelblue3","purple4", "black","khaki4")) +
+#   theme_classic() +
+#   guides(fill = guide_legend(title = "Cluster Group")) +
+#   labs(x = "Total Length (mm)", y = "Chromis Abundance") +
+#   theme(legend.position = "top", legend.direction = "horizontal") +
+#   facet_grid(rows = vars(Habitat_Type))
+# # , scales = "free_y")
+# 
+# 
+# chromis_size_hist
+# 
+# 
+# # ggsave("figures/chromis_size_hist.png", chromis_size_hist,
+# #        width = 9, height = 10, dpi = 600)
+# 
+# kelp_bass_size_hist <- dat_fish_l %>%
+#   # mutate(Habitat_Type = fct_relevel(Habitat_Type, levels = c(
+#   #   "High Relief",
+#   #   "Medium Relief",
+#   #   "Low Relief",
+#   #   "High Ecotone",
+#   #   "Medium Ecotone",
+#   #   "Low Ecotone"))) %>% 
+#   filter(Genus_spp == "Paralabrax clathratus") %>%
+#   ggplot(aes(x = Length, fill = cluster)) +
+#   geom_histogram(binwidth = 25, position = "stack", alpha = 0.7) +
+#   scale_fill_manual(values = c("black", "khaki4", "purple4", "steelblue3", "springgreen4", "coral2")) +
+#   theme_classic() +
+#   guides(fill = guide_legend(title = "Cluster Group")) +
+#   labs(x = "Total Length (mm)", y = "Kelp Bass Abundance") +
+#   theme(legend.position = "top", legend.direction = "horizontal") +
+#   facet_grid(rows = vars(Habitat_Type))
+# # , scales = "free_y")
+# 
+# kelp_bass_size_hist
+# 
+# # ggsave("figures/kelp_bass_size_hist.png", kelp_bass_size_hist,
+# #        width = 9, height = 10, dpi = 600)
+# 
+# 
+# sheephead_size_hist <- dat_fish_l %>%
+#   # mutate(Habitat_Type = fct_relevel(Habitat_Type, levels = c(
+#   #   "High Relief",
+#   #   "Medium Relief",
+#   #   "Low Relief",
+#   #   "High Ecotone",
+#   #   "Medium Ecotone",
+#   #   "Low Ecotone"))) %>% 
+#   filter(Genus_spp == "Semicossyphus pulcher") %>%
+#   ggplot(aes(x = Length, fill = cluster)) +
+#   geom_histogram(position = "stack", alpha = 0.7, binwidth = 20) +
+#   scale_fill_manual(values = c("black", "khaki4", "purple4", "steelblue3", "springgreen4", "coral2")) +
+#   theme_classic() +
+#   guides(fill = guide_legend(title = "Cluster Group")) +
+#   labs(x = "Total Length (mm)", y = "Sheephead Abundance") +
+#   theme(legend.position = "top", legend.direction = "horizontal") +
+#   facet_grid(rows = vars(Habitat_Type))
+# # , scales = "free_y")
+# 
+# 
+# sheephead_size_hist
 
 
 # ggsave("figures/sheephead_size_hist.png", sheephead_size_hist,
 #        width = 9, height = 10, dpi = 600)
 ### making kernal density curves
 
-#No stacked positions ----
-chromis_dens_curve <- dat_fish_l %>% 
-  filter(Genus_spp == "Chromis punctipinnis") %>% 
-  ggplot(aes(x = Length, fill = cluster_2)) +
-  geom_density(alpha = 0.5) +
-  scale_fill_manual(values = c("black", "khaki4", "purple4", "steelblue3", "springgreen4", "coral2")) +
-  theme_classic() +
-  guides(fill = guide_legend(title = "Cluster Group")) +
-  labs(x = "Blacksmith Total Length (mm)", y = "Denisty") +
-  scale_x_continuous(expand = c(0,0)) +
-  scale_y_continuous(expand = c(0,0)) +
-  theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20), legend.position = "none")
 
-chromis_dens_curve
-
-ggsave("figures/density_curve_chromis.png", chromis_dens_curve,
-       width = 10, height = 6, dpi = 600)
-
-
-kelp_bass_dens_curve <- dat_fish_l %>%  
-  filter(Genus_spp == "Paralabrax clathratus") %>% 
-  ggplot(aes(x = Length, fill = cluster_2)) +
-  geom_density(alpha = 0.5) +
-  scale_fill_manual(values = c("black", "khaki4", "purple4", "steelblue3", "springgreen4", "coral2")) +
-  theme_classic() +
-  guides(fill = guide_legend(title = "Cluster Group")) +
-  labs(x = "Kelp Bass Total Length (mm)", y = "Denisty")+
-  scale_x_continuous(expand = c(0,0)) +
-  scale_y_continuous(expand = c(0,0)) +
-  theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20), legend.position = "none")
-
-ggsave("figures/density_curve_kelp_bass.png", kelp_bass_dens_curve,
-       width = 12, height = 9, dpi = 600)
-
-
-sheephead_dens_curve <- dat_fish_l %>% 
-  filter(Genus_spp == "Semicossyphus pulcher") %>% 
-  ggplot(aes(x = Length, fill = cluster_2)) +
-  geom_density(alpha = 0.5) +
-  scale_fill_manual(values = c("black", "khaki4", "purple4", "steelblue3", "springgreen4", "coral2")) +
-  theme_classic() +
-  guides(fill = guide_legend(title = "Cluster Group")) +
-  labs(x = "Sheephead Total Length (mm)", y = "Denisty")+
-  scale_x_continuous(expand = c(0,0)) +
-  scale_y_continuous(expand = c(0,0)) +
-  theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20), legend.position = "none")
-
-ggsave("figures/density_curve_sheephead.png", sheephead_dens_curve,
-       width = 12, height = 9, dpi = 600)
-
-#### stacked positions
-
-chromis_stacked <- dat_fish_l %>% 
-  filter(Genus_spp == "Chromis punctipinnis") %>% 
-  ggplot(aes(x = Length, fill = cluster_2)) +
-  geom_density(position = "stack", alpha = 0.5) +
-  scale_fill_manual(values = c("black", "khaki4", "purple4", "steelblue3", "springgreen4", "coral2")) +
-  theme_classic() +
-  guides(fill = guide_legend(title = "Cluster Group")) +
-  labs(x = "Blacksmith Total Length (mm)", y = "Denisty")+
-  scale_x_continuous(expand = c(0,0)) +
-  scale_y_continuous(expand = c(0,0)) +
-  theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20), legend.position = "none")
-
-# ggsave("figures/chromis_stacked.png", chromis_stacked,
-#        width = 12, height = 9, dpi = 600)
-
-
-kelp_bass_stacked <- dat_fish_l %>% 
-  filter(Genus_spp == "Paralabrax clathratus") %>% 
-  ggplot(aes(x = Length, fill = cluster_2)) +
-  geom_density(position = "stack", alpha = 0.5) +
-  scale_fill_manual(values = c("black", "khaki4", "purple4", "steelblue3", "springgreen4", "coral2")) +
-  theme_classic() +
-  guides(fill = guide_legend(title = "Cluster Group")) +
-  labs(x = "Kelp Bass Total Length (mm)", y = "Denisty")+
-  scale_x_continuous(expand = c(0,0)) +
-  scale_y_continuous(expand = c(0,0))+
-  theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20), legend.position = "none") 
-
-# ggsave("figures/kelp_bass_stacked.png", kelp_bass_stacked,
-#        width = 12, height = 9, dpi = 600)
-
-sheephead_stacked <- dat_fish_l %>% 
-  filter(Genus_spp == "Semicossyphus pulcher") %>% 
-  ggplot(aes(x = Length, fill = cluster_2)) +
-  geom_density(position = "stack", alpha = 0.5) +
-  scale_fill_manual(values = c("black", "khaki4", "purple4", "steelblue3", "springgreen4", "coral2")) +
-  theme_classic() +
-  guides(fill = guide_legend(title = "Cluster Group")) +
-  labs(x = "Sheephead Total Length (mm)", y = "Denisty")+
-  scale_x_continuous(expand = c(0,0)) +
-  scale_y_continuous(expand = c(0,0)) +
-  theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20), legend.position = "none")
-
-# ggsave("figures/sheephead_stacked.png", sheephead_stacked,
-#        width = 12, height = 9, dpi = 600)
-
-#### Fill option ----
-
-chromis_filled <- dat_fish_l %>% 
-  filter(Genus_spp == "Chromis punctipinnis") %>% 
-  ggplot(aes(x = Length, fill = cluster_2)) +
-  geom_density(position = "fill", alpha = 0.5) +
-  scale_fill_manual(values = c("black", "khaki4", "purple4", "steelblue3", "springgreen4", "coral2")) +
-  theme_classic() +
-  guides(fill = guide_legend(title = "Cluster Group")) +
-  labs(x = "Blacksmith Total Length (mm)", y = "Denisty")+
-  scale_x_continuous(expand = c(0,0)) +
-  scale_y_continuous(expand = c(0,0)) +
-  theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20), legend.position = "none")
-
-
-# ggsave("figures/chromis_filled.png", chromis_filled,
-#        width = 12, height = 9, dpi = 600)
-
-kelp_bass_filled <- dat_fish_l %>% 
-  filter(Genus_spp == "Paralabrax clathratus") %>% 
-  ggplot(aes(x = Length, fill = cluster_2)) +
-  geom_density(position = "fill", alpha = 0.5) +
-  scale_fill_manual(values = c("black", "khaki4", "purple4", "steelblue3", "springgreen4", "coral2")) +
-  theme_classic() +
-  guides(fill = guide_legend(title = "Cluster Group")) +
-  labs(x = "Kelp Bass Total Length (mm)", y = "Denisty")+
-  scale_x_continuous(expand = c(0,0)) +
-  scale_y_continuous(expand = c(0,0)) +
-  theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20), legend.position = "none")
-
-
-# ggsave("figures/kelp_bass_filled.png", kelp_bass_filled,
-#        width = 12, height = 9, dpi = 600)
-
-sheephead_filled <- dat_fish_l %>% 
-  filter(Genus_spp == "Semicossyphus pulcher") %>% 
-  ggplot(aes(x = Length, fill = cluster_2)) +
-  geom_density(position = "fill", alpha = 0.5) +
-  scale_fill_manual(values = c("black", "khaki4", "purple4", "steelblue3", "springgreen4", "coral2")) +
-  theme_classic() +
-  guides(fill = guide_legend(title = "Cluster Group")) +
-  labs(x = "Sheephead Total Length (mm)", y = "Denisty")+
-  scale_x_continuous(expand = c(0,0)) +
-  scale_y_continuous(expand = c(0,0)) +
-  theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20))
-
-# ggsave("figures/sheephead_filled.png", sheephead_filled,
-#        width = 12, height = 9, dpi = 600)
-
-
-
-####Trying filled with habitat types ----
-
-
+#### Trying filled with habitat types ----
 # Define the colors for the habitat types
 relief_colors <- c("High Relief" = "black", "Medium Relief" = "gray", "Low Relief" = "white")
 
@@ -2376,4 +2113,100 @@ for(species_ in unique_species){
   ggsave(paste0("figures/density_plots/density_plot_", species_, ".png"), species_density_plots[[species_]],
          width = 9, height = 8, dpi = 600)
 }
-
+#### No stacked positions ----
+# chromis_dens_curve <- dat_fish_l %>% 
+#   filter(Genus_spp == "Chromis punctipinnis") %>% 
+#   ggplot(aes(x = Length, fill = cluster)) +
+#   geom_density(alpha = 0.5) +
+#   scale_fill_manual(values = c("black", "khaki4", "purple4", "steelblue3", "springgreen4", "coral2")) +
+#   theme_classic() +
+#   guides(fill = guide_legend(title = "Cluster Group")) +
+#   labs(x = "Blacksmith Total Length (mm)", y = "Denisty") +
+#   scale_x_continuous(expand = c(0,0)) +
+#   scale_y_continuous(expand = c(0,0)) +
+#   theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20), legend.position = "none")
+# 
+# chromis_dens_curve
+# 
+# ggsave("figures/density_curve_chromis.png", chromis_dens_curve,
+#        width = 10, height = 6, dpi = 600)
+# 
+# 
+# kelp_bass_dens_curve <- dat_fish_l %>%  
+#   filter(Genus_spp == "Paralabrax clathratus") %>% 
+#   ggplot(aes(x = Length, fill = cluster)) +
+#   geom_density(alpha = 0.5) +
+#   scale_fill_manual(values = c("black", "khaki4", "purple4", "steelblue3", "springgreen4", "coral2")) +
+#   theme_classic() +
+#   guides(fill = guide_legend(title = "Cluster Group")) +
+#   labs(x = "Kelp Bass Total Length (mm)", y = "Denisty")+
+#   scale_x_continuous(expand = c(0,0)) +
+#   scale_y_continuous(expand = c(0,0)) +
+#   theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20), legend.position = "none")
+# 
+# ggsave("figures/density_curve_kelp_bass.png", kelp_bass_dens_curve,
+#        width = 12, height = 9, dpi = 600)
+# 
+# 
+# sheephead_dens_curve <- dat_fish_l %>% 
+#   filter(Genus_spp == "Semicossyphus pulcher") %>% 
+#   ggplot(aes(x = Length, fill = cluster)) +
+#   geom_density(alpha = 0.5) +
+#   scale_fill_manual(values = c("black", "khaki4", "purple4", "steelblue3", "springgreen4", "coral2")) +
+#   theme_classic() +
+#   guides(fill = guide_legend(title = "Cluster Group")) +
+#   labs(x = "Sheephead Total Length (mm)", y = "Denisty")+
+#   scale_x_continuous(expand = c(0,0)) +
+#   scale_y_continuous(expand = c(0,0)) +
+#   theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20), legend.position = "none")
+# 
+# ggsave("figures/density_curve_sheephead.png", sheephead_dens_curve,
+#        width = 12, height = 9, dpi = 600)
+# 
+# #### stacked positions
+# 
+# chromis_stacked <- dat_fish_l %>% 
+#   filter(Genus_spp == "Chromis punctipinnis") %>% 
+#   ggplot(aes(x = Length, fill = cluster_2)) +
+#   geom_density(position = "stack", alpha = 0.5) +
+#   scale_fill_manual(values = c("black", "khaki4", "purple4", "steelblue3", "springgreen4", "coral2")) +
+#   theme_classic() +
+#   guides(fill = guide_legend(title = "Cluster Group")) +
+#   labs(x = "Blacksmith Total Length (mm)", y = "Denisty")+
+#   scale_x_continuous(expand = c(0,0)) +
+#   scale_y_continuous(expand = c(0,0)) +
+#   theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20), legend.position = "none")
+# 
+# # ggsave("figures/chromis_stacked.png", chromis_stacked,
+# #        width = 12, height = 9, dpi = 600)
+# 
+# 
+# kelp_bass_stacked <- dat_fish_l %>% 
+#   filter(Genus_spp == "Paralabrax clathratus") %>% 
+#   ggplot(aes(x = Length, fill = cluster_2)) +
+#   geom_density(position = "stack", alpha = 0.5) +
+#   scale_fill_manual(values = c("black", "khaki4", "purple4", "steelblue3", "springgreen4", "coral2")) +
+#   theme_classic() +
+#   guides(fill = guide_legend(title = "Cluster Group")) +
+#   labs(x = "Kelp Bass Total Length (mm)", y = "Denisty")+
+#   scale_x_continuous(expand = c(0,0)) +
+#   scale_y_continuous(expand = c(0,0))+
+#   theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20), legend.position = "none") 
+# 
+# # ggsave("figures/kelp_bass_stacked.png", kelp_bass_stacked,
+# #        width = 12, height = 9, dpi = 600)
+# 
+# sheephead_stacked <- dat_fish_l %>% 
+#   filter(Genus_spp == "Semicossyphus pulcher") %>% 
+#   ggplot(aes(x = Length, fill = cluster_2)) +
+#   geom_density(position = "stack", alpha = 0.5) +
+#   scale_fill_manual(values = c("black", "khaki4", "purple4", "steelblue3", "springgreen4", "coral2")) +
+#   theme_classic() +
+#   guides(fill = guide_legend(title = "Cluster Group")) +
+#   labs(x = "Sheephead Total Length (mm)", y = "Denisty")+
+#   scale_x_continuous(expand = c(0,0)) +
+#   scale_y_continuous(expand = c(0,0)) +
+#   theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20), legend.position = "none")
+# 
+# # ggsave("figures/sheephead_stacked.png", sheephead_stacked,
+# #        width = 12, height = 9, dpi = 600)
