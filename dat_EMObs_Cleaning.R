@@ -17,8 +17,8 @@ library(hms)
 
 
 #Read in the Event Measure observation text file 
-dat_EMObs <- read_tsv("data/dat_EMObs.txt")
-
+# dat_EMObs <- read_tsv("data/dat_EMObs.txt")
+dat_EMObs = read.csv("data/ALL_Lengths.csv")
 #take a quick look at these data in case you need to alter column types
 glimpse(dat_EMObs)
 

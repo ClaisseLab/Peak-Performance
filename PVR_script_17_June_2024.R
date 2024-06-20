@@ -185,6 +185,8 @@ spp_ID <- dat_fish_2m_wide %>%
   count(Genus_spp, sort = T) %>% 
   arrange(desc(n))
 
+dat_fish_l = dat_fish_l %>% 
+  mutate(Length = as.numeric(Length))
 
 dat_fish_min_max_l <- dat_fish_l %>% 
   group_by(Genus_spp) %>% 
@@ -2374,3 +2376,4 @@ for(species_ in unique_species){
   ggsave(paste0("figures/density_plots/density_plot_", species_, ".png"), species_density_plots[[species_]],
          width = 9, height = 8, dpi = 600)
 }
+
