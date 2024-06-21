@@ -1475,6 +1475,89 @@ spp_scrs_ft <- flextable(spp_scrs,
 
 
 #### Cluster Analysis for OS_HT ----
+
+#### DENDO EDITS ----
+
+# Method 1 Dynamic Tree
+
+library(dynamicTreeCut)
+library(ggdendro)
+library(ggplot2)
+library(vegan)
+
+# Create a distance matrix based on the community assemblages
+dis.comm_fish_os_ht <- vegdist(comm_fish_os_ht)
+
+# Create a cluster dendrogram
+clust.comm_fish_os_ht <- hclust(dis.comm_fish_os_ht, "average")
+
+# Dynamic tree cut to find clusters
+dynamic_clusters <- cutreeDynamic(clust.comm_fish_os_ht, distM = as.matrix(dis.comm_fish_os_ht), deepSplit = 2, pamRespectsDendro = FALSE)
+
+# Convert hclust object to dendrogram object
+dendro <- as.dendrogram(clust.comm_fish_os_ht)
+
+# Extract dendrogram data for ggplot2
+dendro_data <- dendro_data(dendro)
+
+# Plot the dendrogram with dynamic clusters highlighted
+ggplot() +
+  geom_segment(data = segment(dendro_data), aes(x = x, y = y, xend = xend, yend = yend)) +
+  geom_text(data = label(dendro_data), aes(x = x, y = y, label = label)) +
+  # scale_color_manual(values = rainbow(length(unique(dynamic_clusters)))) +
+  theme_minimal() +
+  labs(title = "Cluster Dendrogram with Dynamic Clusters", x = "Samples", y = "Height") +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank(), legend.title = element_blank())
+
+
+# Method 2
+library(cluster)
+
+# Determine the optimal number of clusters using the silhouette method
+sil_width <- numeric(10)
+for (i in 2:10) {
+  clusters <- cutree(clust.comm_fish_os_ht, k = i)
+  sil <- silhouette(clusters, dist(comm_fish_os_ht))
+  sil_width[i] <- mean(sil[, 3])
+}
+
+# Plot the silhouette width to determine the optimal number of clusters
+plot(1:10, sil_width, type = "b", xlab = "Number of Clusters", ylab = "Average Silhouette Width")
+abline(v = which.max(sil_width), col = "red", lty = 2)
+title(main = "Silhouette Method for Optimal Number of Clusters")
+
+# Use K = 6 for clustering
+K <- 6
+
+# Cut the dendrogram at K clusters
+clusters <- cutree(clust.comm_fish_os_ht, k = K)
+
+# Convert hclust object to dendrogram object again for plotting
+dendro <- as.dendrogram(clust.comm_fish_os_ht)
+
+# Extract dendrogram data for ggplot2
+dendro_data <- dendro_data(dendro)
+
+# Plot the dendrogram with K clusters highlighted
+ggplot() +
+  geom_segment(data = segment(dendro_data), aes(x = x, y = y, xend = xend, yend = yend)) +
+  geom_text(data = label(dendro_data), aes(x = x, y = y, label = label), hjust = 1, angle = 90, size = 3) +
+  # scale_color_manual(values = rainbow(K)) +
+  theme_minimal() +
+  labs(title = paste("Cluster Dendrogram with", K, "Clusters"), x = "Samples", y = "Height") +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank(), legend.title = element_blank())
+
+
+
+
+
+
+
+
+
+
+
+
 # wide_fish_os_ht <- wide_fish_os_ht %>% 
 #   mutate(dend_lab = paste(Orientation, current, Habitat_Type))
 # 
