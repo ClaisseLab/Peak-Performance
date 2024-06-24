@@ -1974,9 +1974,9 @@ for(species_ in species){
                                "West Perpendicular High Relief",
                                "East Perpendicular High Ecotone"
     )) %>%
-    mutate(Habitat_Type = factor(Habitat_Type, levels = c("High Relief",
+    mutate(Habitat_Type = factor(Habitat_Type, levels = c("Low Relief",
                                                           "Medium Relief",
-                                                          "Low Relief",
+                                                          "High Relief",
                                                           "High Ecotone",
                                                           "Medium Ecotone",
                                                           "Low Ecotone"))) %>% 
@@ -2170,9 +2170,9 @@ species_density_plots <- list()
 # Loop over each species to create density plots
 for(species_ in unique_species){
   species_density_plots[[species_]] <- dat_fish_l %>%
-    mutate(Habitat_Type = factor(Habitat_Type, levels = c("Low Relief",
+    mutate(Habitat_Type = factor(Habitat_Type, levels = c("High Relief",
                                                           "Medium Relief",
-                                                          "High Relief",
+                                                          "Low Relief",
                                                           "High Ecotone",
                                                           "Medium Ecotone",
                                                           "Low Ecotone"))) %>% 
