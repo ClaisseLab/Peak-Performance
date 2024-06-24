@@ -1485,7 +1485,16 @@ library(ggdendro)
 library(ggplot2)
 library(vegan)
 
-# Create a distance matrix based on the community assemblages
+wide_fish_os_ht <- wide_fish_os_ht %>% 
+  mutate(dend_lab = paste(os_lab, Module, sep = " "))
+
+
+
+comm_fish_os_ht <- wide_fish_os_ht %>%
+  column_to_rownames(var = "dend_lab") %>%
+  select(Chromis_punctipinnis:Semicossyphus_pulcher)
+
+# Create acomm_fish_os_ht# Create a distance matrix based on the community assemblages
 dis.comm_fish_os_ht <- vegdist(comm_fish_os_ht)
 
 # Create a cluster dendrogram
@@ -1503,7 +1512,7 @@ dendro_data <- dendro_data(dendro)
 # Plot the dendrogram with dynamic clusters highlighted
 ggplot() +
   geom_segment(data = segment(dendro_data), aes(x = x, y = y, xend = xend, yend = yend)) +
-  geom_text(data = label(dendro_data), aes(x = x, y = y, label = label)) +
+  geom_text(data = label(dendro_data), aes(x = x, y = y, label = label, angle = 45)) +
   # scale_color_manual(values = rainbow(length(unique(dynamic_clusters)))) +
   theme_minimal() +
   labs(title = "Cluster Dendrogram with Dynamic Clusters", x = "Samples", y = "Height") +
