@@ -1049,9 +1049,9 @@ dat_fish_ht_mod_18 <- dat_fish_t %>%
   )
 
 wide_fish_ht_mod_18 <- dat_fish_ht_mod_18 %>% 
-  mutate(dens_100m2_4rt = dens_100m2^0.25) %>% 
+  mutate(dens_100m2_sqrt = dens_100m2^0.5) %>% 
   filter(Genus_spp %in% focal_spp) %>% 
-  pivot_wider(id_cols = Module, names_from = Genus_spp, values_from = dens_100m2_4rt)
+  pivot_wider(id_cols = Module, names_from = Genus_spp, values_from = dens_100m2_sqrt)
 
 names(wide_fish_ht_mod_18) <- str_replace_all(names(wide_fish_ht_mod_18), c(" " = "_"))
 
@@ -1247,9 +1247,9 @@ dat_fish_os_ht <- dat_fish_t %>%
 
 
 wide_fish_os_ht <- dat_fish_os_ht %>% 
-  mutate(dens_100m2_4rt = dens_100m2^0.25) %>% 
+  mutate(dens_100m2_sqrt = dens_100m2^0.5) %>% 
   filter(Genus_spp %in% focal_spp) %>% 
-  pivot_wider(id_cols = Habitat_Type:os, names_from = Genus_spp, values_from = dens_100m2_4rt) %>% 
+  pivot_wider(id_cols = Habitat_Type:os, names_from = Genus_spp, values_from = dens_100m2_sqrt) %>% 
   mutate(os_ht = paste(os, Habitat_Type))
 
 
@@ -1434,8 +1434,11 @@ spp_scrs <- spp_scrs %>%
                                   startsWith(common_name, "Emb") ~ "Black Perch",
                                   startsWith(common_name, "Gir") ~ "Opaleye",
                                   startsWith(common_name, "Oxy") ~ "Senorita",
-                                  startsWith(common_name, "Para") ~ "Barred Sand Bass",
-                                  startsWith(common_name, "Seb") ~ "Rock Wrasse",
+                                  common_name == "Paralabrax nebulifer" ~ "Barred Sand Bass",
+                                  common_name == "Paralabrax clathratus" ~ "Kelp Bass",
+                                  common_name == "Halichoeres semicinctus" ~ "Rock Wrasse",
+                                  common_name == "Damalichthys vacca" ~ "Pile Perch",
+                                  startsWith(common_name, "Seb") ~ "Olive Rockfish",
                                   startsWith(common_name, "Sem") ~ "CA Sheephead"))
 
 plot_NMDS_os_ht_spp_vect <- plot_wide_fish_os_ht_hulls +
@@ -1443,7 +1446,7 @@ plot_NMDS_os_ht_spp_vect <- plot_wide_fish_os_ht_hulls +
                arrow = arrow(length = unit(.25, "cm")),
                color = "grey10", lwd = 0.3) +
   geom_text(data = spp_scrs, aes(x = -NMDS1*.27, y = -NMDS2*.27, label = common_name, shape = NULL), fontface = "bold", color = "black", size = 7) +
-  theme(legend.position = c(0.01, .99),
+  theme(legend.position = c(0.01, .5),
         legend.justification = c(0, 1),   
         legend.background = element_rect(color = "black", fill = "white", size = 0.5),
         legend.margin = margin(5, 5, 5, 5), legend.direction = "vertical")
@@ -1452,15 +1455,14 @@ plot_NMDS_os_ht_spp_vect <- plot_wide_fish_os_ht_hulls +
 
 plot_NMDS_os_ht_spp_vect
 
-new_plot_NMDS_os_ht_spp_vect = plot_NMDS_os_ht_spp_vect + scale_y_reverse()
+#new_plot_NMDS_os_ht_spp_vect = plot_NMDS_os_ht_spp_vect + scale_y_reverse()
 
 new_plot_NMDS_os_ht_spp_vect
 ggsave("figures/new_submodule_assemblage.png", new_plot_NMDS_os_ht_spp_vect,
        width = 16, height = 12, dpi = 600)
 ggsave("figures/submodule_assemblage.png", plot_NMDS_os_ht_spp_vect,
        width = 16, height = 12, dpi = 600)
-ggsave("figures/submodule_assemblage.pdf", plot_NMDS_os_ht_spp_vect,
-       width = 16, height = 12, dpi = 600)
+
 spp_scrs <- spp_scrs %>% 
   arrange(pval)
 
@@ -1625,6 +1627,13 @@ os_ht_dendro <- color_branches(os_ht_dendro, col = c("black","black","black", "b
  #      xlab = "Dissimilarity",
  #      xlim = c(0.4, 0))
 
+# define some clusters
+mycl <- cutree(os_ht_dendro, h=0.23)
+mycl
+as_tibble(mycl)
+
+os_ht_dendro$height
+
 gg_os_ht_dend <- as.ggdend(os_ht_dendro)
 plot_gg_os_ht_dend <- ggplot(gg_os_ht_dend, horiz = T, offset_labels = -0.01)
 plot_gg_os_ht_dend <- plot_gg_os_ht_dend +
@@ -1642,8 +1651,18 @@ plot_gg_os_ht_dend
 ggsave("figures/submodule_dendrogram.png", plot_gg_os_ht_dend,
        width = 15, height = 7.5, dpi = 600)
 
-ggsave("figures/submodule_dendrogram.pdf", plot_gg_os_ht_dend,
-       width = 15, height = 7.5, dpi = 600)
+# Determining number of significant clusters
+# No longer supported looking for alternative
+#simprof.comm_fish_os_ht <- simprof(comm_fish_os_ht,
+                                   # num.expected=1000,
+                                   # num.simulated=999,
+                                   # method.distance="braycurtis",
+                                   # alpha=0.05,
+                                   # warn.braycurtis=F)
+
+
+# simprof.comm_fish_os_ht
+# summary(simprof.comm_fish_os_ht)
 
 
 
@@ -1877,7 +1896,7 @@ dat_fish_spp = dat_fish_spp %>%
 
 dat_fish_spp <- dat_fish_spp %>% 
   mutate(transect = paste(Module, Module_Side, Habitat_Type),
-         dens_100m2_4rt = dens_100m2^0.25) %>% 
+         dens_100m2_sqrt = dens_100m2^0.5) %>% 
   left_join(transect_var)
 
 dat_fish_spp <- dat_fish_spp %>% 
@@ -1927,10 +1946,10 @@ dat_fish_spp <- dat_fish_spp %>%
     "High Ecotone", "Medium Ecotone", "Low Ecotone"
   )))
 
-# Create transect and dens_100m2_4rt columns
+# Create transect and dens_100m2_sqrt columns
 dat_fish_spp <- dat_fish_spp %>%
   mutate(transect = paste(Module, Module_Side, Habitat_Type),
-         dens_100m2_4rt = dens_100m2^0.25) %>%
+         dens_100m2_sqrt = dens_100m2^0.5) %>%
   left_join(transect_var)
 
 # Ensure construction_group is a character
