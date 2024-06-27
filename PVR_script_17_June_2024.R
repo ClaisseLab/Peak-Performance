@@ -1459,7 +1459,8 @@ ggsave("figures/new_submodule_assemblage.png", new_plot_NMDS_os_ht_spp_vect,
        width = 16, height = 12, dpi = 600)
 ggsave("figures/submodule_assemblage.png", plot_NMDS_os_ht_spp_vect,
        width = 16, height = 12, dpi = 600)
-
+ggsave("figures/submodule_assemblage.pdf", plot_NMDS_os_ht_spp_vect,
+       width = 16, height = 12, dpi = 600)
 spp_scrs <- spp_scrs %>% 
   arrange(pval)
 
@@ -1641,18 +1642,8 @@ plot_gg_os_ht_dend
 ggsave("figures/submodule_dendrogram.png", plot_gg_os_ht_dend,
        width = 15, height = 7.5, dpi = 600)
 
-# Determining number of significant clusters
-# No longer supported looking for alternative
-#simprof.comm_fish_os_ht <- simprof(comm_fish_os_ht,
-                                   # num.expected=1000,
-                                   # num.simulated=999,
-                                   # method.distance="braycurtis",
-                                   # alpha=0.05,
-                                   # warn.braycurtis=F)
-
-
-# simprof.comm_fish_os_ht
-# summary(simprof.comm_fish_os_ht)
+ggsave("figures/submodule_dendrogram.pdf", plot_gg_os_ht_dend,
+       width = 15, height = 7.5, dpi = 600)
 
 
 
