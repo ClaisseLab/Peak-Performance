@@ -1475,97 +1475,243 @@ spp_scrs_ft <- flextable(spp_scrs,
 
 
 
-#### Cluster Analysis for OS_HT ----
+#### Sub-module Assemblage Cluster Analysis ----
 
 #### DENDO EDITS ----
 
 # Method 1 Dynamic Tree
-
-library(dynamicTreeCut)
+library(dendextend)
 library(ggdendro)
 library(ggplot2)
 library(vegan)
+library(dplyr)
 
-wide_fish_os_ht <- wide_fish_os_ht %>% 
+# Define colors for each category in 'cluster_2'
+group_colors <- c("Group 1" = "coral2",
+                  "Group 2" = "springgreen4",
+                  "Group 3" = "steelblue3",
+                  "Group 4" = "purple4",
+                  "Group 5" = "black",
+                  "Group 6" = "khaki4")
+
+# Define shapes for each level in 'Module'
+module_shapes <- c("Module 1" = 15,
+                   "Module 2" = 16,
+                   "Module 3" = 17,
+                   "Module 4" = 0,
+                   "Module 5" = 1,
+                   "Module 6" = 2)
+
+# Modify the dataframe
+wide_fish_os_ht <- wide_fish_os_ht %>%
   mutate(dend_lab = paste(os_lab, Module, sep = " "))
-
-
 
 comm_fish_os_ht <- wide_fish_os_ht %>%
   column_to_rownames(var = "dend_lab") %>%
   select(Chromis_punctipinnis:Semicossyphus_pulcher)
 
-# Create acomm_fish_os_ht# Create a distance matrix based on the community assemblages
 dis.comm_fish_os_ht <- vegdist(comm_fish_os_ht)
 
 # Create a cluster dendrogram
 clust.comm_fish_os_ht <- hclust(dis.comm_fish_os_ht, "average")
 
-# Dynamic tree cut to find clusters
-dynamic_clusters <- cutreeDynamic(clust.comm_fish_os_ht, distM = as.matrix(dis.comm_fish_os_ht), deepSplit = 2, pamRespectsDendro = FALSE)
+# Convert to a dendrogram object
+os_ht_dendro <- as.dendrogram(clust.comm_fish_os_ht)
 
-# Convert hclust object to dendrogram object
-dendro <- as.dendrogram(clust.comm_fish_os_ht)
+# Extract the order of the labels in the dendrogram
+dendro_labels <- labels(os_ht_dendro)
 
-# Extract dendrogram data for ggplot2
-dendro_data <- dendro_data(dendro)
+# Map the reordered labels to their corresponding colors based on 'cluster_2'
+label_color_mapping <- sapply(dendro_labels, function(label) {
+  group <- wide_fish_os_ht[wide_fish_os_ht$dend_lab == label, "cluster_2"][[1]]
+  group_colors[group]
+})
 
-# Plot the dendrogram with dynamic clusters highlighted
-ggplot() +
-  geom_segment(data = segment(dendro_data), aes(x = x, y = y, xend = xend, yend = yend)) +
-  geom_text(data = label(dendro_data), aes(x = x, y = y, label = label, angle = 45)) +
-  # scale_color_manual(values = rainbow(length(unique(dynamic_clusters)))) +
-  theme_minimal() +
-  labs(title = "Cluster Dendrogram with Dynamic Clusters", x = "Samples", y = "Height") +
-  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank(), legend.title = element_blank())
+# Map the reordered labels to their corresponding shapes based on 'Module'
+label_shape_mapping <- sapply(dendro_labels, function(label) {
+  module <- wide_fish_os_ht[wide_fish_os_ht$dend_lab == label, "Module"][[1]]
+  module_shapes[module]
+})
+
+# Modify the plotting pipeline with the correct order of colors and shapes
+os_ht_dendro <- os_ht_dendro %>%
+  set("leaves_pch", label_shape_mapping) %>%  # node point type based on module
+  set("leaves_cex", 5) %>%  # node point size
+  set("leaves_col", label_color_mapping)  # node point color
+
+# Plot the dendrogram again
+plot(os_ht_dendro)
+
+order.dendrogram(os_ht_dendro)
+
+# Define the new order
+new_order <- c(2,8,10,18,15,22,16,5,12,7,6,23,24,20,3,11,4,13,14,19,1,9,17,21)
+
+# Rotate the dendrogram
+dend_rotated <- rotate(os_ht_dendro, new_order)
+
+# Plot the rotated dendrogram
+plot(dend_rotated)
+
+# Convert to ggplot object
+gg_os_ht_dend <- as.ggdend(os_ht_dendro)
+
+# Plot using ggplot2
+plot_gg_os_ht_dend <- ggplot(gg_os_ht_dend, horiz = TRUE, offset_labels = -0.01) +
+  theme_classic() +
+  theme(plot.margin = margin(1, 1, 1, 1, "cm")) +
+  theme(axis.title.y = element_blank(), axis.text.y = element_blank(), axis.ticks.y = element_blank(), legend.position = "none", axis.line.y = element_blank(), axis.title.x = element_text(vjust = -1.2, hjust = 0.5)) +
+  theme(text = element_text(size = 24)) +
+  scale_y_reverse(breaks = c(0.3, 0.2, 0.1, 0), expand = c(0, .1, 0, .1)) + 
+  labs(y = "Bray-Curtis Dissimilarity")
+
+# Plot the ggplot object
+print(plot_gg_os_ht_dend)
+
+# Save the plot
+ggsave("figures/submodule_dendrogram.png", plot_gg_os_ht_dend,
+       width = 15, height = 7.5, dpi = 600)
+
+# module_shapes <- c("circle", "square", "triangle", "diamond", "cross", "plus")
+# 
+# # Define a vector of colors based on cluster_2 (6 unique character string values)
+# cluster_colors <- c("coral2","springgreen4", "steelblue3","purple4" ,"black","khaki4")
+# 
+# # Assign shapes and colors to the dendrogram leaves based on Module and cluster_2
+# os_ht_dendro <- os_ht_dendro %>%
+#   set("leaves_pch", module_shapes[as.numeric(factor(wide_fish_os_ht$Module))]) %>%  # node point type based on Module
+#   set("leaves_cex", 4) %>%  # node point size
+#   set("leaves_col", cluster_colors[as.numeric(factor(wide_fish_os_ht$cluster_2))])  # node point color based on cluster_2
+# 
+# # Plot the modified dendrogram
+# plot(os_ht_dendro)
 
 
-# Method 2
-library(cluster)
+# os_ht_dendro <- os_ht_dendro %>%
+#   set("leaves_pch", as.integer(factor(wide_fish_os_ht$Module))) %>%  # Convert Module to numeric for shapes
+#   set("leaves_col", as.character(wide_fish_os_ht$cluster_2))   
 
-# Determine the optimal number of clusters using the silhouette method
-sil_width <- numeric(10)
-for (i in 2:10) {
-  clusters <- cutree(clust.comm_fish_os_ht, k = i)
-  sil <- silhouette(clusters, dist(comm_fish_os_ht))
-  sil_width[i] <- mean(sil[, 3])
-}
 
-# Plot the silhouette width to determine the optimal number of clusters
-plot(1:10, sil_width, type = "b", xlab = "Number of Clusters", ylab = "Average Silhouette Width")
-abline(v = which.max(sil_width), col = "red", lty = 2)
-title(main = "Silhouette Method for Optimal Number of Clusters")
-
-# Use K = 6 for clustering
-K <- 6
-
-# Cut the dendrogram at K clusters
-clusters <- cutree(clust.comm_fish_os_ht, k = K)
-
-# Convert hclust object to dendrogram object again for plotting
-dendro <- as.dendrogram(clust.comm_fish_os_ht)
-
-# Extract dendrogram data for ggplot2
-dendro_data <- dendro_data(dendro)
-
-# Plot the dendrogram with K clusters highlighted
-ggplot() +
-  geom_segment(data = segment(dendro_data), aes(x = x, y = y, xend = xend, yend = yend)) +
-  geom_text(data = label(dendro_data), aes(x = x, y = y, label = label), hjust = 1, angle = 90, size = 3) +
-  # scale_color_manual(values = rainbow(K)) +
-  theme_minimal() +
-  labs(title = paste("Cluster Dendrogram with", K, "Clusters"), x = "Samples", y = "Height") +
-  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank(), legend.title = element_blank())
-
+# # Convert to ggdend object
+# gg_os_ht_dend <- as.ggdend(os_ht_dendro)
+# 
+# # Extract labels from dendrogram
+# labels <- labels(os_ht_dendro)
+# 
+# # Define vectors of colors and shapes (adjust these as needed)
+# color_vector <- c("coral2", "springgreen4", "steelblue3", "purple4", "black", "khaki4")  # 6 colors
+# shape_vector <- c(15, 16, 17, 0, 1, 2)  # Shapes 15, 16, 17, 0, 1, 2
+# 
+# # Create a data frame to map labels to colors and shapes
+# color_shape_df <- data.frame(dend_lab = labels, 
+#                              color = rep(color_vector, length.out = length(labels)),
+#                              shape = rep(shape_vector, length.out = length(labels)))
+# 
+# # Merge color and shape information based on dend_lab
+# wide_fish_os_ht <- merge(wide_fish_os_ht, color_shape_df, by = "dend_lab")
+# 
+# # Create ggplot object
+# plot_gg_os_ht_dend <- ggplot(gg_os_ht_dend, horiz = TRUE, offset_labels = -0.01) +
+#   theme_classic() +
+#   theme(plot.margin = margin(1,1,1,1, "cm")) +
+#   theme(axis.title.y = element_blank(), axis.text.y = element_blank(), axis.ticks.y = element_blank(), legend.position = "none", axis.line.y = element_blank(), axis.title.x = element_text(vjust = -1.2, hjust = 0.5)) +
+#   theme(text = element_text(size = 24)) +
+#   scale_y_reverse(breaks = c(0.3, 0.2, 0.1, 0), expand = c(0, 0.1, 0, 0.1)) + 
+#   labs(y = "Bray-Curtis Dissimilarity") +
+#   geom_point(data = wide_fish_os_ht, aes(shape = factor(shape), fill = color), size = 4)
+# 
+# # Display the plot
+# print(plot_gg_os_ht_dend)
 
 
 
 
 
+# plot(rotate(os_ht_dendro, c(23:1)),
+#      horiz = T,
+#      xlab = "Dissimilarity")
+# 
+# plot(os_ht_dendro)
+# dend <- as.dendrogram(clust.Comm_Gut_Wide_R_Rt_S)
+# par(mar=c(5,1,1,12))
+# 
+# plot(rotate(dend, c(1:15, 20, 24, 26:27, 25, 29:30, 28, 23:21, 16:17, 18:19)), 
+#      horiz = T,
+#      xlab = "Dissimilarity",
+#      xlim = c(0.4, 0))
 
 
 
 
+
+
+
+# 
+# comm_fish_os_ht <- wide_fish_os_ht %>%
+#   column_to_rownames(var = "dend_lab") %>%
+#   select(Chromis_punctipinnis:Semicossyphus_pulcher)
+# 
+# # Create acomm_fish_os_ht# Create a distance matrix based on the community assemblages
+# dis.comm_fish_os_ht <- vegdist(comm_fish_os_ht)
+# 
+# # Create a cluster dendrogram
+# clust.comm_fish_os_ht <- hclust(dis.comm_fish_os_ht, "average")
+# 
+# # Dynamic tree cut to find clusters
+# dynamic_clusters <- cutreeDynamic(clust.comm_fish_os_ht, distM = as.matrix(dis.comm_fish_os_ht), deepSplit = 2, pamRespectsDendro = FALSE)
+# 
+# # Convert hclust object to dendrogram object
+# dendro <- as.dendrogram(clust.comm_fish_os_ht)
+# 
+# # Extract dendrogram data for ggplot2
+# dendro_data <- dendro_data(dendro)
+# 
+# # Plot the dendrogram with dynamic clusters highlighted
+# ggplot() +
+#   geom_segment(data = segment(dendro_data), aes(x = x, y = y, xend = xend, yend = yend)) +
+#   geom_text(data = label(dendro_data), aes(x = x, y = y, label = label, angle = 45)) +
+#   # scale_color_manual(values = rainbow(length(unique(dynamic_clusters)))) +
+#   theme_minimal() +
+#   labs(title = "Cluster Dendrogram with Dynamic Clusters", x = "Samples", y = "Height") +
+#   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank(), legend.title = element_blank())
+# 
+# 
+# # Method 2
+# library(cluster)
+# 
+# # Determine the optimal number of clusters using the silhouette method
+# sil_width <- numeric(10)
+# for (i in 2:10) {
+#   clusters <- cutree(clust.comm_fish_os_ht, k = i)
+#   sil <- silhouette(clusters, dist(comm_fish_os_ht))
+#   sil_width[i] <- mean(sil[, 3])
+# }
+# 
+# # Plot the silhouette width to determine the optimal number of clusters
+# plot(1:10, sil_width, type = "b", xlab = "Number of Clusters", ylab = "Average Silhouette Width")
+# abline(v = which.max(sil_width), col = "red", lty = 2)
+# title(main = "Silhouette Method for Optimal Number of Clusters")
+# 
+# # Use K = 6 for clustering
+# K <- 6
+# 
+# # Cut the dendrogram at K clusters
+# clusters <- cutree(clust.comm_fish_os_ht, k = K)
+# 
+# # Convert hclust object to dendrogram object again for plotting
+# dendro <- as.dendrogram(clust.comm_fish_os_ht)
+# 
+# # Extract dendrogram data for ggplot2
+# dendro_data <- dendro_data(dendro)
+# 
+# # Plot the dendrogram with K clusters highlighted
+# ggplot() +
+#   geom_segment(data = segment(dendro_data), aes(x = x, y = y, xend = xend, yend = yend)) +
+#   geom_text(data = label(dendro_data), aes(x = x, y = y, label = label), hjust = 1, angle = 90, size = 3) +
+#   # scale_color_manual(values = rainbow(K)) +
+#   theme_minimal() +
+#   labs(title = paste("Cluster Dendrogram with", K, "Clusters"), x = "Samples", y = "Height") +
+#   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank(), legend.title = element_blank())
 
 
 # wide_fish_os_ht <- wide_fish_os_ht %>% 
@@ -1604,6 +1750,8 @@ ggplot() +
 #   select(Chromis_punctipinnis:Semicossyphus_pulcher)
 
 #Create a distance matrix based on the community assemblages
+<<<<<<< HEAD
+=======
 dis.comm_fish_os_ht <- vegdist(comm_fish_os_ht)
 
 #Create a cluster dendrogram
@@ -1650,7 +1798,61 @@ ggsave("figures/submodule_dendrogram.pdf", plot_gg_os_ht_dend,
 
 
 
+>>>>>>> ae0e83dae5d8cb11cf4e14365b149eeb2b657733
 
+# dis.comm_fish_os_ht <- vegdist(comm_fish_os_ht)
+# 
+# # Create a cluster dendrogram
+# clust.comm_fish_os_ht <- hclust(dis.comm_fish_os_ht, "average")
+# dend <- as.dendrogram(clust.comm_fish_os_ht)
+# 
+# # # Rotate branches by specifying the desired order of leaves
+# # desired_order <- c(4, 3, 2, 1, 6, 5) # Example order, modify as needed
+# # dend <- rotate(dend, desired_order)
+# 
+# # Map labels to grouping variables
+# labels <- rownames(comm_fish_os_ht)
+# groups <- wide_fish_os_ht$Module  # Replace with your actual variable
+# 
+# # Assign colors and shapes based on groups and cluster_2
+# # Adjust these based on your specific variables and color/shape mappings
+# group_colors <- c("coral2","springgreen4", "steelblue3","purple4" ,"black","khaki4")
+# group_shapes <- c(15, 16, 17, 0, 1, 2)  # Example shapes, adjust as needed
+# 
+# # Map colors and shapes based on Module
+# leaf_colors <- group_colors[as.numeric(groups)]
+# leaf_shapes <- group_shapes[as.numeric(groups)]
+# 
+# # Set leaf attributes
+# dend <- dend %>%
+#   set("labels_colors", leaf_colors) %>%
+#   set("leaves_pch", leaf_shapes) %>%
+#   set("leaves_cex", 2)
+# 
+# # Convert to ggdend object
+# gg_dend <- as.ggdend(dend)
+# 
+# # Extract label data for plotting custom points
+# label_data <- gg_dend$segments %>%
+#   filter(yend == 0) %>%
+#   mutate(label = gg_dend$labels$label)
+# 
+# # Plot the dendrogram
+# plot_gg_dend <- ggplot() +
+#   geom_segment(data = gg_dend$segments, aes(x = x, y = y, xend = xend, yend = yend)) +
+#   geom_text(data = gg_dend$labels, aes(x = x, y = y, label = label), size = 3, hjust = 1, angle = 90, vjust = 0.5) +
+#   geom_point(data = label_data, aes(x = x, y = yend, color = as.factor(wide_fish_os_ht$cluster_2), shape = as.factor(wide_fish_os_ht$Module)), size = 4, stroke = 1) + # Custom points
+#   scale_shape_manual(values = c(15, 16, 17, 0, 1, 2)) +  # Adjust shape values based on Module
+#   scale_color_manual(values = c("coral2","springgreen4", "steelblue3","purple4" ,"black","khaki4")) +  # Adjust color values based on cluster_2
+#   theme_classic() +
+#   theme(plot.margin = margin(1, 1, 1, 10, "cm")) + # Adjust right margin
+#   theme(axis.title.y = element_blank(), axis.text.y = element_blank(), axis.ticks.y = element_blank(), legend.position = "none", axis.line.y = element_blank(), axis.title.x = element_text(vjust = -1.2, hjust = 0.5)) +
+#   theme(text = element_text(size = 24)) +
+#   scale_y_reverse(breaks = c(0.3, 0.2, 0.1, 0), expand = c(0, 0.1, 0, 0.1)) +
+#   labs(y = "Bray-Curtis Dissimilarity")
+# 
+# # Display the plot
+# print(plot_gg_dend)
 
 
 #### Adonis OS_HT ----
