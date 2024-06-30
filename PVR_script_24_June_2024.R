@@ -1389,7 +1389,9 @@ plot_wide_fish_os_ht_hulls <- plot_wide_fish_os_ht +
 guides(fill = guide_legend(
   title = "Cluster Group",
   override.aes = list(alpha = 1)  # Set alpha to 1 to remove transparency in legend
-))
+),
+shape = guide_legend(title = "Habitat Type")) +
+  guides(shape = guide_legend(override.aes = list(stroke = 1)))
 
 
 plot_wide_fish_os_ht_hulls
@@ -1530,17 +1532,19 @@ plot(os_ht_dendro)
 
 order.dendrogram(os_ht_dendro)
 
-# Define the new order
-new_order <- c(2,8,10,18,15,22,16,5,12,7,6,23,24,20,3,11,4,13,14,19,1,9,17,21)
+# new_order = c(2,  7, 10, 20,3, 11,  6, 23, 24,  16,  5, 12,  4, 18,  8, 15, 22 , 1 ,14 ,19, 13,  9, 17, 21)
 
+# # Define the new order
+ new_order <- c(2, 8,10,18,15,22,16,5,12,7,6,23,24,20,3,11,4,13,14,19,1,9,17,21)
+# 
 # Rotate the dendrogram
 dend_rotated <- rotate(os_ht_dendro, new_order)
-
-# Plot the rotated dendrogram
+# 
+# # Plot the rotated dendrogram
 plot(dend_rotated)
-order.dendrogram(dend_rotated)
-
-rotation2 = c(7,  6, 23, 24,  3, 11, 10, 20,    9, 5, 12, 18,  4, 16,        1, 14, 19, 15, 22, 8 , 13, 17, 21,            2)
+# order.dendrogram(dend_rotated)
+# 
+rotation2 = c(2, 7,  6, 23, 24,      9, 5, 12, 18,  4, 16,        1, 14, 19, 15, 22, 8 , 13, 17, 21,   3, 11, 10, 20         )
 
 dend_rotated2 <- rotate(dend_rotated, rotation2)
 plot(dend_rotated2)
@@ -1562,7 +1566,7 @@ print(plot_gg_os_ht_dend)
 
 # Save the plot
 ggsave("figures/submodule_dendrogram_sqrt.png", plot_gg_os_ht_dend,
-       width = 15, height = 7.5, dpi = 600)
+       width = 18, height = 7.5, dpi = 600)
 
 
 
