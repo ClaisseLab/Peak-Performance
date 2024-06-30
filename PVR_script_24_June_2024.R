@@ -978,11 +978,11 @@ dens_sp_os_ht <- dens_sp_os_ht %>%
   left_join(cluster_df, by = "dend_group")
 
 dens_sp_os_ht = dens_sp_os_ht %>% 
-mutate(cluster_ordered = (case_when(startsWith(as.character(cluster_group), "1") ~ "3",
-                                    startsWith(as.character(cluster_group), "2") ~ "5",
-                                    startsWith(as.character(cluster_group), "3") ~ "1",
-                                    startsWith(as.character(cluster_group), "4") ~ "2",
-                                    startsWith(as.character(cluster_group), "5") ~ "4")))
+mutate(cluster_ordered = (case_when(startsWith(as.character(cluster_group), "1") ~ "4",
+                                    startsWith(as.character(cluster_group), "2") ~ "1",
+                                    startsWith(as.character(cluster_group), "3") ~ "2",
+                                    startsWith(as.character(cluster_group), "4") ~ "3",
+                                    startsWith(as.character(cluster_group), "5") ~ "5")))
 
                               
 dens_sp_clust_heatmap <- dens_sp_os_ht %>% 
@@ -992,7 +992,7 @@ dens_sp_clust_heatmap <- dens_sp_os_ht %>%
             max_clust_dens = max(mean_dens),
             count_tt = n())
 
-group_color_lab <- c("coral2","springgreen4", "steelblue3","purple4" ,"black")
+group_color_lab <- c("black","coral2","springgreen4", "steelblue3","purple4")
 
 heatmap_sp_clust<-dens_sp_clust_heatmap %>%
   ggplot(aes(x=cluster_ordered, y = Genus_spp)) +
@@ -1330,11 +1330,11 @@ wide_fish_os_ht <- wide_fish_os_ht %>%
   left_join(cluster_df, by = "dend_group")
 
 wide_fish_os_ht = wide_fish_os_ht %>% 
-  mutate(cluster_ordered = (case_when(startsWith(as.character(cluster_group), "1") ~ "3",
-                                      startsWith(as.character(cluster_group), "2") ~ "5",
-                                      startsWith(as.character(cluster_group), "3") ~ "1",
-                                      startsWith(as.character(cluster_group), "4") ~ "2",
-                                      startsWith(as.character(cluster_group), "5") ~ "4")))
+  mutate(cluster_ordered = (case_when(startsWith(as.character(cluster_group), "1") ~ "4",
+                                      startsWith(as.character(cluster_group), "2") ~ "1",
+                                      startsWith(as.character(cluster_group), "3") ~ "2",
+                                      startsWith(as.character(cluster_group), "4") ~ "3",
+                                      startsWith(as.character(cluster_group), "5") ~ "5")))
 
          
 
@@ -1351,7 +1351,7 @@ plot_wide_fish_os_ht <- ggplot(wide_fish_os_ht,
   geom_text(aes(label = os_lab), vjust = 3, hjust = .4, size = 5) +
   geom_point(aes(color = as.factor(cluster_ordered), shape = Habitat_Type),size = 7, stroke = 3) +
   scale_shape_manual(values = c(15, 16, 17, 0, 1, 2)) +
-  scale_color_manual(values = c("coral2","springgreen4", "steelblue3","purple4","black")) +
+  scale_color_manual(values = c("black", "coral2","springgreen4", "steelblue3","purple4")) +
   theme_classic() +
   theme(axis.title.x = element_blank(), axis.title.y = element_blank(), axis.text = element_blank(), axis.ticks = element_blank(), panel.background = element_rect(fill = NA, color = "black", size = 1, linetype = "solid")) +
   theme(plot.margin = margin(1,2,1,1, "cm")) +
@@ -1383,7 +1383,7 @@ hull_os_ht <- wide_fish_os_ht %>%
 
 plot_wide_fish_os_ht_hulls <- plot_wide_fish_os_ht +
   geom_polygon(data = hull_os_ht, aes(x = -MDS1, y = -MDS2, group = as.factor(cluster_ordered), fill = as.factor(cluster_ordered)),alpha = 0.3) + 
-  scale_fill_manual(values = c("coral2","springgreen4", "steelblue3","purple4","black")) +
+  scale_fill_manual(values = c("black","coral2","springgreen4", "steelblue3","purple4")) +
   geom_text(x = 0.28, y = 0.22, label = c(paste("2D Stress:" ,round(NMDS_comm_fish_os_ht$stress,2), sep = " ")), color = "black", size = 8) +
   # guides(fill = guide_legend(title = "Cluster Group"))
 guides(fill = guide_legend(
@@ -1404,7 +1404,7 @@ os_ht_spp_fit <- envfit(NMDS_comm_fish_os_ht, comm_fish_os_ht, permutations = 99
 
 spp_scrs <- as_tibble(scores(os_ht_spp_fit, display = "vectors"), rownames = "Species") %>% 
   mutate(pval = os_ht_spp_fit$vectors$pvals) %>% 
-  filter(pval <= 0.01 )
+  filter(pval <= 0.05 )
 
 spp_scrs <- spp_scrs %>% 
   mutate(common_name = str_replace_all(Species, "_", " "))
