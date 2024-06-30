@@ -1750,8 +1750,7 @@ ggsave("figures/submodule_dendrogram.png", plot_gg_os_ht_dend,
 #   select(Chromis_punctipinnis:Semicossyphus_pulcher)
 
 #Create a distance matrix based on the community assemblages
-<<<<<<< HEAD
-=======
+
 dis.comm_fish_os_ht <- vegdist(comm_fish_os_ht)
 
 #Create a cluster dendrogram

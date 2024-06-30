@@ -1404,7 +1404,7 @@ hull_os_ht <- wide_fish_os_ht %>%
 plot_wide_fish_os_ht_hulls <- plot_wide_fish_os_ht +
   geom_polygon(data = hull_os_ht, aes(x = -MDS1, y = -MDS2, group = cluster_2, fill = cluster_2),alpha = 0.3) + 
   scale_fill_manual(values = c("coral2","springgreen4", "steelblue3","purple4" ,"black","khaki4")) +
-  geom_text(x = 0.21, y = 0.17, label = c(paste("2D Stress:" ,round(NMDS_comm_fish_os_ht$stress,2), sep = " ")), color = "black", size = 8) +
+  geom_text(x = 0.28, y = 0.22, label = c(paste("2D Stress:" ,round(NMDS_comm_fish_os_ht$stress,2), sep = " ")), color = "black", size = 8) +
   # guides(fill = guide_legend(title = "Cluster Group"))
 guides(fill = guide_legend(
   title = "Cluster Group",
@@ -1446,7 +1446,7 @@ plot_NMDS_os_ht_spp_vect <- plot_wide_fish_os_ht_hulls +
                arrow = arrow(length = unit(.25, "cm")),
                color = "grey10", lwd = 0.3) +
   geom_text(data = spp_scrs, aes(x = -NMDS1*.27, y = -NMDS2*.27, label = common_name, shape = NULL), fontface = "bold", color = "black", size = 7) +
-  theme(legend.position = c(0.01, .5),
+  theme(legend.position = c(0.01, .40),
         legend.justification = c(0, 1),   
         legend.background = element_rect(color = "black", fill = "white", size = 0.5),
         legend.margin = margin(5, 5, 5, 5), legend.direction = "vertical")
@@ -1454,13 +1454,12 @@ plot_NMDS_os_ht_spp_vect <- plot_wide_fish_os_ht_hulls +
 
 
 plot_NMDS_os_ht_spp_vect
-
-#new_plot_NMDS_os_ht_spp_vect = plot_NMDS_os_ht_spp_vect + scale_y_reverse()
+new_plot_NMDS_os_ht_spp_vect = plot_NMDS_os_ht_spp_vect + scale_y_reverse()
 
 new_plot_NMDS_os_ht_spp_vect
-ggsave("figures/new_submodule_assemblage.png", new_plot_NMDS_os_ht_spp_vect,
+ggsave("figures/new_submodule_assemblage_sqrt.png", new_plot_NMDS_os_ht_spp_vect,
        width = 16, height = 12, dpi = 600)
-ggsave("figures/submodule_assemblage.png", plot_NMDS_os_ht_spp_vect,
+ggsave("figures/submodule_assemblage_sqrt.png", plot_NMDS_os_ht_spp_vect,
        width = 16, height = 12, dpi = 600)
 
 spp_scrs <- spp_scrs %>% 
@@ -1483,44 +1482,97 @@ spp_scrs_ft <- flextable(spp_scrs,
 
 # Method 1 Dynamic Tree
 
-library(dynamicTreeCut)
+library(dendextend)
 library(ggdendro)
 library(ggplot2)
 library(vegan)
+library(dplyr)
 
-wide_fish_os_ht <- wide_fish_os_ht %>% 
+# Define colors for each category in 'cluster_2'
+group_colors <- c("Group 1" = "coral2",
+                  "Group 2" = "springgreen4",
+                  "Group 3" = "steelblue3",
+                  "Group 4" = "purple4",
+                  "Group 5" = "black",
+                  "Group 6" = "khaki4")
+
+# Define shapes for each level in 'Module'
+module_shapes <- c("Module 1" = 15,
+                   "Module 2" = 16,
+                   "Module 3" = 17,
+                   "Module 4" = 0,
+                   "Module 5" = 1,
+                   "Module 6" = 2)
+
+# Modify the dataframe
+wide_fish_os_ht <- wide_fish_os_ht %>%
   mutate(dend_lab = paste(os_lab, Module, sep = " "))
-
-
 
 comm_fish_os_ht <- wide_fish_os_ht %>%
   column_to_rownames(var = "dend_lab") %>%
   select(Chromis_punctipinnis:Semicossyphus_pulcher)
 
-# Create acomm_fish_os_ht# Create a distance matrix based on the community assemblages
 dis.comm_fish_os_ht <- vegdist(comm_fish_os_ht)
 
 # Create a cluster dendrogram
 clust.comm_fish_os_ht <- hclust(dis.comm_fish_os_ht, "average")
 
-# Dynamic tree cut to find clusters
-dynamic_clusters <- cutreeDynamic(clust.comm_fish_os_ht, distM = as.matrix(dis.comm_fish_os_ht), deepSplit = 2, pamRespectsDendro = FALSE)
+# Convert to a dendrogram object
+os_ht_dendro <- as.dendrogram(clust.comm_fish_os_ht)
 
-# Convert hclust object to dendrogram object
-dendro <- as.dendrogram(clust.comm_fish_os_ht)
+# Extract the order of the labels in the dendrogram
+dendro_labels <- labels(os_ht_dendro)
 
-# Extract dendrogram data for ggplot2
-dendro_data <- dendro_data(dendro)
+# Map the reordered labels to their corresponding colors based on 'cluster_2'
+label_color_mapping <- sapply(dendro_labels, function(label) {
+  group <- wide_fish_os_ht[wide_fish_os_ht$dend_lab == label, "cluster_2"][[1]]
+  group_colors[group]
+})
 
-# Plot the dendrogram with dynamic clusters highlighted
-ggplot() +
-  geom_segment(data = segment(dendro_data), aes(x = x, y = y, xend = xend, yend = yend)) +
-  geom_text(data = label(dendro_data), aes(x = x, y = y, label = label, angle = 45)) +
-  # scale_color_manual(values = rainbow(length(unique(dynamic_clusters)))) +
-  theme_minimal() +
-  labs(title = "Cluster Dendrogram with Dynamic Clusters", x = "Samples", y = "Height") +
-  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank(), legend.title = element_blank())
+# Map the reordered labels to their corresponding shapes based on 'Module'
+label_shape_mapping <- sapply(dendro_labels, function(label) {
+  module <- wide_fish_os_ht[wide_fish_os_ht$dend_lab == label, "Module"][[1]]
+  module_shapes[module]
+})
 
+# Modify the plotting pipeline with the correct order of colors and shapes
+os_ht_dendro <- os_ht_dendro %>%
+  set("leaves_pch", label_shape_mapping) %>%  # node point type based on module
+  set("leaves_cex", 5) %>%  # node point size
+  set("leaves_col", label_color_mapping)  # node point color
+
+# Plot the dendrogram again
+plot(os_ht_dendro)
+
+order.dendrogram(os_ht_dendro)
+
+# Define the new order
+new_order <- c(2,8,10,18,15,22,16,5,12,7,6,23,24,20,3,11,4,13,14,19,1,9,17,21)
+
+# Rotate the dendrogram
+dend_rotated <- rotate(os_ht_dendro, new_order)
+
+# Plot the rotated dendrogram
+plot(dend_rotated)
+
+# Convert to ggplot object
+gg_os_ht_dend <- as.ggdend(os_ht_dendro)
+
+# Plot using ggplot2
+plot_gg_os_ht_dend <- ggplot(gg_os_ht_dend, horiz = TRUE, offset_labels = -0.01) +
+  theme_classic() +
+  theme(plot.margin = margin(1, 1, 1, 1, "cm")) +
+  theme(axis.title.y = element_blank(), axis.text.y = element_blank(), axis.ticks.y = element_blank(), legend.position = "none", axis.line.y = element_blank(), axis.title.x = element_text(vjust = -1.2, hjust = 0.5)) +
+  theme(text = element_text(size = 24)) +
+  scale_y_reverse(breaks = c(0.3, 0.2, 0.1, 0), expand = c(0, .1, 0, .1)) + 
+  labs(y = "Bray-Curtis Dissimilarity")
+
+# Plot the ggplot object
+print(plot_gg_os_ht_dend)
+
+# Save the plot
+ggsave("figures/submodule_dendrogram_sqrt.png", plot_gg_os_ht_dend,
+       width = 15, height = 7.5, dpi = 600)
 
 # Method 2
 library(cluster)
@@ -1559,117 +1611,12 @@ ggplot() +
   labs(title = paste("Cluster Dendrogram with", K, "Clusters"), x = "Samples", y = "Height") +
   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank(), legend.title = element_blank())
 
-
-
-
-
-
-
-
-
-
-
-
-# wide_fish_os_ht <- wide_fish_os_ht %>% 
-#   mutate(dend_lab = paste(Orientation, current, Habitat_Type))
-# 
-# 
-# wide_fish_os_ht <- wide_fish_os_ht %>%
-#   mutate(dend_lab = str_replace(dend_lab, "Parallel Up-current High Ecotone", "Par. Offshore High Ecotone"),
-#          dend_lab = str_replace(dend_lab, "Parallel Up-current High Relief", "Par. Offshore High Relief"),
-#          dend_lab = str_replace(dend_lab, "Parallel Up-current Medium Ecotone", "Par. Offshore Medium Ecotone"),
-#          dend_lab = str_replace(dend_lab, "Parallel Up-current Medium Relief", "Par. Offshore Medium Relief"),
-#          dend_lab = str_replace(dend_lab, "Parallel Up-current Low Ecotone", "Par. Offshore Low Ecotone"),
-#          dend_lab = str_replace(dend_lab, "Parallel Up-current Low Relief", "Par. Offshore Low Relief"),
-#          dend_lab = str_replace(dend_lab, "Parallel Down-current High Ecotone", "Par. Inshore High Ecotone"),
-#          dend_lab = str_replace(dend_lab, "Parallel Down-current High Relief", "Par. Inshore High Relief"),
-#          dend_lab = str_replace(dend_lab, "Parallel Down-current Medium Ecotone", "Par. Inshore Medium Ecotone"),
-#          dend_lab = str_replace(dend_lab, "Parallel Down-current Medium Relief", "Par. Inshore Medium Relief"),
-#          dend_lab = str_replace(dend_lab, "Parallel Down-current Low Ecotone", "Par. Inshore Low Ecotone"),
-#          dend_lab = str_replace(dend_lab, "Parallel Down-current Low Relief", "Par. Inshore Low Relief"),
-#          dend_lab = str_replace(dend_lab, "Perpendicular Up-current High Ecotone", "Perp. West High Ecotone"),
-#          dend_lab = str_replace(dend_lab, "Perpendicular Up-current High Relief", "Perp. West High Relief"),
-#          dend_lab = str_replace(dend_lab, "Perpendicular Up-current Medium Ecotone", "Perp. West Medium Ecotone"),
-#          dend_lab = str_replace(dend_lab, "Perpendicular Up-current Medium Relief", "Perp. West Medium Relief"),
-#          dend_lab = str_replace(dend_lab, "Perpendicular Up-current Low Ecotone", "Perp. West Low Ecotone"),
-#          dend_lab = str_replace(dend_lab, "Perpendicular Up-current Low Relief", "Perp. West Low Relief"),
-#          dend_lab = str_replace(dend_lab, "Perpendicular Down-current High Ecotone", "Perp. East High Ecotone"),
-#          dend_lab = str_replace(dend_lab, "Perpendicular Down-current High Relief", "Perp. East High Relief"),
-#          dend_lab = str_replace(dend_lab, "Perpendicular Down-current Medium Ecotone", "Perp. East Medium Ecotone"),
-#          dend_lab = str_replace(dend_lab, "Perpendicular Down-current Medium Relief", "Perp. East Medium Relief"),
-#          dend_lab = str_replace(dend_lab, "Perpendicular Down-current Low Ecotone", "Perp. East Low Ecotone"),
-#          dend_lab = str_replace(dend_lab, "Perpendicular Down-current Low Relief", "Perp. East Low Relief"))
-# 
-# 
-# comm_fish_os_ht <- wide_fish_os_ht %>%
-#   column_to_rownames(var = "dend_lab") %>%
-#   select(Chromis_punctipinnis:Semicossyphus_pulcher)
-
-#Create a distance matrix based on the community assemblages
-dis.comm_fish_os_ht <- vegdist(comm_fish_os_ht)
-
-#Create a cluster dendrogram
-clust.comm_fish_os_ht <- hclust(dis.comm_fish_os_ht, "average")
-
-#Add color labeles and branches based on the NMDS groups
-os_ht_dendro <- color_labels(clust.comm_fish_os_ht, col = c("black","black","black", "black", "black", "black"), k = 6)
-
-os_ht_dendro <- color_branches(os_ht_dendro, col = c("black","black","black", "black", "black", "black"), k = 6)
-
- # os_ht_dendro <- os_ht_dendro %>%
- #   rotate(24:2)
- 
- # dend <- as.dendrogram(clust.Comm_Gut_Wide_R_Rt_S)
- # par(mar=c(5,1,1,12))
- # 
- # plot(rotate(dend, c(1:15, 20, 24, 26:27, 25, 29:30, 28, 23:21, 16:17, 18:19)), 
- #      horiz = T,
- #      xlab = "Dissimilarity",
- #      xlim = c(0.4, 0))
-
 # define some clusters
-mycl <- cutree(os_ht_dendro, h=0.23)
+mycl <- cutree(os_ht_dendro, h=0.24)
 mycl
 as_tibble(mycl)
 
 os_ht_dendro$height
-
-gg_os_ht_dend <- as.ggdend(os_ht_dendro)
-plot_gg_os_ht_dend <- ggplot(gg_os_ht_dend, horiz = T, offset_labels = -0.01)
-plot_gg_os_ht_dend <- plot_gg_os_ht_dend +
-  theme_classic() +
-  theme(plot.margin = margin(1,1,1,1, "cm")) +
-  theme(axis.title.y = element_blank(), axis.text.y = element_blank(), axis.ticks.y = element_blank(), legend.position = "none", axis.line.y = element_blank(), axis.title.x = element_text(vjust = - 1.2, hjust = .5)) +
-  theme(text = element_text(size = 24)) +
-  scale_y_reverse(breaks = c(0.3,0.2,0.1,0), expand=c(0,.1,0,.1)) + 
-  labs(y = "Bray-Curtis Dissimilarity")
-
-
-
-plot_gg_os_ht_dend
-
-ggsave("figures/submodule_dendrogram.png", plot_gg_os_ht_dend,
-       width = 15, height = 7.5, dpi = 600)
-
-# Determining number of significant clusters
-# No longer supported looking for alternative
-#simprof.comm_fish_os_ht <- simprof(comm_fish_os_ht,
-                                   # num.expected=1000,
-                                   # num.simulated=999,
-                                   # method.distance="braycurtis",
-                                   # alpha=0.05,
-                                   # warn.braycurtis=F)
-
-
-# simprof.comm_fish_os_ht
-# summary(simprof.comm_fish_os_ht)
-
-
-
-
-
-
-
 
 
 #### Adonis OS_HT ----
