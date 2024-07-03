@@ -1,7 +1,7 @@
 #### Project Information ----
 #### Project Title: Peak Performance: vertical relief influences fish density and assemblage structure on heterogenous restoration reef
 #### Authors: James W. Sturges & Jeremy T. Claisse
-#### Last Updated: Jun3 20 2024
+#### Last Updated: July 3rd 2024
 
 #### Required Packages ----
 library(here)
@@ -2391,7 +2391,17 @@ plot_dens_total_os_ht <- dat_fish_os_ht %>%
   guides(fill = guide_legend(title = "Focal Fish Species")) +
   scale_x_discrete(expand = c(0,0)) +
   scale_y_continuous(expand = c(0,0)) +
-  scale_fill_brewer(palette = "Set3", labels = c("Blacksmith", "Pile Perch", "Black Perch", "Opaleye", "Rock Wrasse", "Rainbow Seaperch", "Senorita", "Kelp Bass", "Barred Sand Bass", "Olive Rockfish", "California Sheephead")) +
+  scale_fill_brewer(palette = "Set3", labels = c("Blacksmith",
+                                                 "Señorita",
+                                                 "Kelp Bass",
+                                                 "California Sheephead",
+                                                 "Black Perch",
+                                                 "Rainbow Seaperch",
+                                                 "Barred Sand Bass",
+                                                 "Opaleye",
+                                                 "Pile Perch",
+                                                 "Rock Wrasse",
+                                                 "Olive Rockfish")) +
   theme(
     legend.position = c(.857, .797),
     legend.direction = "vertical", 
@@ -2456,7 +2466,17 @@ plot_prop_dens_total_os_ht <- dat_fish_os_ht %>%
   guides(fill = guide_legend(title = "Focal Fish Species")) +
   scale_x_discrete(expand = c(0,0)) +
   scale_y_continuous(expand = c(0,0), labels = scales::percent) +
-  scale_fill_brewer(palette = "Set3", labels = c("Blacksmith", "Pile Perch", "Black Perch", "Opaleye", "Rock Wrasse", "Rainbow Seaperch", "Senorita", "Kelp Bass", "Barred Sand Bass", "Olive Rockfish", "California Sheephead")) +
+  scale_fill_brewer(palette = "Set3", labels = c("Blacksmith",
+                                                 "Señorita",
+                                                 "Kelp Bass",
+                                                 "California Sheephead",
+                                                 "Black Perch",
+                                                 "Rainbow Seaperch",
+                                                 "Barred Sand Bass",
+                                                 "Opaleye",
+                                                 "Pile Perch",
+                                                 "Rock Wrasse",
+                                                 "Olive Rockfish")) +
   theme(
     legend.position = c(.857, .797),
     legend.direction = "vertical", 
