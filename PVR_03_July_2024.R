@@ -2143,13 +2143,30 @@ new_order <- c(2, 8,10,18,15,22,16,5,12,7,6,23,24,20,3,11,4,13,14,19,1,9,17,21)
 dend_rotated <- rotate(os_ht_dendro, new_order)
 # 
 # # Plot the rotated dendrogram
-# plot(dend_rotated)
+plot(dend_rotated)
 # order.dendrogram(dend_rotated)
 # 
 rotation2 = c(2, 7,  6, 23, 24,      9, 5, 12, 18,  4, 16,        1, 14, 19, 15, 22, 8 , 13, 17, 21,   3, 11, 10, 20         )
 
 dend_rotated2 <- rotate(dend_rotated, rotation2)
 plot(dend_rotated2)
+order.dendrogram(dend_rotated2)
+
+rotate3 = c(  8, 22, 15,  1, 14, 19,  4, 18, 12,  5, 16,13,  9, 21, 17)
+dend_rotated3 <- rotate(dend_rotated2, rotate3)
+plot(dend_rotated3)
+order.dendrogram(dend_rotated3)
+
+rotate4 = c(13,  9, 21, 17,   8, 22, 15, 19, 14,  1, 16,  5, 12,  4, 18, 6, 24, 23, 11,  3, 10,20,  7,  2)
+dend_rotated4 <- rotate(dend_rotated3, rotate4)
+plot(dend_rotated4)
+order.dendrogram(dend_rotated4)
+
+rotate5 = c(2, 11,  3, 10, 20,  6, 24, 23,  7,18,  4,  5, 12, 16, 19, 14,  1, 15, 22,  8, 13, 17, 21,  9)
+dend_rotated5 <- rotate(dend_rotated4, rotate5)
+plot(dend_rotated5)
+order.dendrogram(dend_rotated5)
+
 
 # Convert to ggplot object
 gg_os_ht_dend <- as.ggdend(dend_rotated2)
@@ -2168,6 +2185,26 @@ print(plot_gg_os_ht_dend)
 
 # Save the plot
 ggsave("figures/submodule_dendrogram.png", plot_gg_os_ht_dend,
+       width = 18, height = 7.5, dpi = 600)
+
+
+# Convert to ggplot object
+gg_os_ht_dend5 <- as.ggdend(dend_rotated5)
+
+# Plot using ggplot2
+plot_gg_os_ht_dend5 <- ggplot(gg_os_ht_dend5, horiz = TRUE, offset_labels = -0.01) +
+  theme_classic() +
+  theme(plot.margin = margin(1, 1, 1, 1, "cm")) +
+  theme(axis.title.y = element_blank(), axis.text.y = element_blank(), axis.ticks.y = element_blank(), legend.position = "none", axis.line.y = element_blank(), axis.title.x = element_text(vjust = -1.2, hjust = 0.5)) +
+  theme(text = element_text(size = 24)) +
+  scale_y_reverse(breaks = c(0.3, 0.2, 0.1, 0), expand = c(0, .1, 0, .1)) + 
+  labs(y = "Bray-Curtis Dissimilarity")
+
+# Plot the ggplot object
+print(plot_gg_os_ht_dend5)
+
+# Save the plot
+ggsave("figures/submodule_dendrogram_clusters.png", plot_gg_os_ht_dend5,
        width = 18, height = 7.5, dpi = 600)
 
 
