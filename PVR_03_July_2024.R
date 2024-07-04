@@ -340,11 +340,11 @@ Start_End_Mids <- Start_End_Time %>%
                              "Mid_Medium"))
 
 #We have already calculated the distance swam along the midline
-#We take the distance swam in m and multiple it by 2m (transect width)
+#We take the distance swam in m and multiple it by m (transect width)
 #the tsect_area_m2 can be used for fish density calculations
 
 Start_End_Mids <- Start_End_Mids %>% 
-  mutate(tsect_area_m2 = Dis_Swim_m * 2)
+  mutate(tsect_area_m2 = Dis_Swim_m * 4)
 
 #I wanted to create a single table that had all transect areas
 #This table is called Start_End_Complete
@@ -378,7 +378,7 @@ Start_End_Complete <- Start_End_Complete %>%
 
 #Manually set the area survey to 32 meters squared for ecotone segments
 Start_End_Complete <- Start_End_Complete %>% 
-  mutate(tsect_area_m2 = replace_na(tsect_area_m2, 32))
+  mutate(tsect_area_m2 = replace_na(tsect_area_m2, 64))
 
 #arrange values by Module
 Start_End_Complete <- Start_End_Complete %>% 
@@ -2924,3 +2924,4 @@ for(species_ in unique_species){
   ggsave(paste0("figures/size_density_plots/density_plot_", species_, ".png"), species_density_plots[[species_]],
          width = 9, height = 8, dpi = 600)
 }
+
