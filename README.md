@@ -1,7 +1,7 @@
 # Peak Performance: vertical relief influences fish density and assemblage structure across a heterogenous restoration reef.
 
 ## Abstract
-To restore sections of temperate rocky-reef degraded by sedimentation, scour, and burial a large quarry rock reef, Palos Verdes Reef (PVR), was built with high-relief elements intended to increase fish biomass productivity and support a more diverse reef community. The large size and replicated design features within the PVR restoration area provided a unique opportunity to study effects of reef design on fish habitat selection patterns during early phases of reef succession. To determine how vertical relief and other design elements influence reef fish density, assemblage structure, and species or size-class specific habitat use patterns on PVR we conducted diver-operated stereo-video camera surveys on all 18 PVR modules 9-13 months post-construction during June and July of 2021. Video analyses suggest that sections of PVR with higher vertical relief typically supported greater fish densities, but species and size-class specific exceptions suggest that habitat heterogeneity is an ideal design element to support diverse reef fish assemblages and ontogenetic life history stages. We also found evidence of a spatial gradient in the restoration area suggesting that fish densities, especially for planktivorous species, tended to be higher on sections of PVR further offshore. Planktivorous fishes are known to mediate benthic-pelagic coupling on temperate rocky-reefs through consumer mediated nutrient transport which will likely influence rates of primary and secondary productivity across PVR. Future restoration efforts should include habitat heterogeneity to support more diverse taxa but should also consider how reef design may influence rates of productivity to meet restoration objections.
+To restore an area of temperate rocky-reef degraded by sedimentation, scour, and burial, a large quarry rock reef, the Palos Verdes Restoration Reef (PVR), was built with a heterogenous design including high relief elements intended to increase fish biomass productivity and support a diverse reef community. The replicated design features provide a unique opportunity to study the effects of reef design on fish habitat use patterns. To determine how submodule scale habitat features are associated with variation in the assemblage structure of focal fish species on the PVR we conducted diver-operated stereo-video surveys on all 18 PVR modules 9-13 months after construction. The highest mean densities of most focal fish species and highest total fish densities were observed on high and medium-relief reef submodules and their adjacent ecotones positioned on the offshore sides or ends of modules. These included the most abundant species on the PVR, the zooplanktivorous Blacksmith (Chromis punctipinnis), as well as the fishery species Kelp Bass (Paralabrax clathratus) and California Sheephead (Bodianus pulcher). On the inshore side of parallel modules, the reef and ecotone transects on low and medium relief submodules exhibited the lowest total mean fish densities, and consistently lower mean focal fish species densities. Focal fish species assemblages also differed between the reef and sand-rock ecotone transects. Reef-resident planktivorous fishes likely contribute to reef primary and secondary productivity through consumer mediated nutrient transport and are an important consideration in restoration reef design. Future reef restoration designs should consider incorporating replicated heterogeneous design features including the placement of higher relief elements relative to shore and current patterns as a special consideration for providing habitat for planktivorous reef-resident fishes.
 
 ## Authors
 
@@ -21,14 +21,18 @@ Corresponding Author: James W. Sturges; [jstur015@fiu.edu](mailto:jstur015@fiu.e
 
 ## Manuscript Highlights
 
-- Reef features such as orientation, side, and relief influence fish species assemblage structure
-- Spatial variability in production could be associated with PVR reef relief leading to sweet spots of high fish densities
-- Species-specific habitat use patterns were present across 24 unique combinations of design features and reef characteristics including 6 habitat types, 2 orientations, and 4 sides possible on PVR modules. 
+•	Focal fish assemblage structure varied with submodule scale habitat features.
+•	Planktivorous fishes were most abundant on the offshore higher relief submodules.
+•	Fishery species were most abundant on the offshore higher relief submodules.
+•	Lowest densities of most species were on inshore low and medium relief submodules.
+•	Focal fish assemblage structure varied between ecotone and reef transects.
 
 ## Keywords
 
-- artificial reef restoration
-- assemblage structure
-- habitat-use patterns
-- 
+- vertical relief
+- ecotone
+- artificial reef design
+- California
+- planktivorous
+- Chromis punctipinnis
 
