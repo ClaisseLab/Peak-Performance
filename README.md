@@ -21,11 +21,11 @@ Corresponding Author: James W. Sturges; [jstur015@fiu.edu](mailto:jstur015@fiu.e
 
 ## Manuscript Highlights
 
-•	Focal fish assemblage structure varied with submodule scale habitat features.
-•	Planktivorous fishes were most abundant on the offshore higher relief submodules.
-•	Fishery species were most abundant on the offshore higher relief submodules.
-•	Lowest densities of most species were on inshore low and medium relief submodules.
-•	Focal fish assemblage structure varied between ecotone and reef transects.
+-	Focal fish assemblage structure varied with submodule scale habitat features.
+-	Planktivorous fishes were most abundant on the offshore higher relief submodules.
+-	Fishery species were most abundant on the offshore higher relief submodules.
+-	Lowest densities of most species were on inshore low and medium relief submodules.
+-	Focal fish assemblage structure varied between ecotone and reef transects.
 
 ## Keywords
 
